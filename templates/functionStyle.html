@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% block title %}风格生成{% endblock %}
+
+
+
+{% block custom_js %}
+    <script type="text/javascript" src="/static/js/index.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+
+   <!-- 功能部分 -->
+    <div class="function2">
+    	<form class="form-horizontal" id="styleform">
+    	    <div class="container">
+    		    <div class="row">
+					<h3 class="selectH3"><span class="glyphicon glyphicon-hand-down"></span>请先选择一种风格</h3>
+					<div class="selectImgDiv" id="selectItemDiv">
+
+                        <div class="item"><!--在这上面添加上isChecked = true-->
+							<div class="img_show">
+								<img src="/static/img/7.jpg" class="img-responsive"/>
+							</div>
+							<div class="img_title">
+								1.png
+							</div>
+							<div class="img_isCheck">
+								<i class="iconfont icon-xuanzhong"></i>
+							</div>
+						</div>
+
+                        <div class="item">
+							<div class="img_show">
+								<img src="/static/img/2.jpg"/>
+							</div>
+							<div class="img_title">
+								2.png
+							</div>
+							<div class="img_isCheck">
+								<i class="iconfont icon-xuanzhong"></i>
+							</div>
+						</div>
+
+						<div class="item">
+							<div class="img_show">
+								<img src="/static/img/3.jpg"/>
+							</div>
+							<div class="img_title">
+								3.png
+							</div>
+							<div class="img_isCheck">
+								<i class="iconfont icon-xuanzhong"></i>
+							</div>
+						</div>
+						<div class="item">
+							<div class="img_show">
+								<img src="/static/img/4.jpg"/>
+							</div>
+							<div class="img_title">
+								4.png
+							</div>
+							<div class="img_isCheck">
+								<i class="iconfont icon-xuanzhong"></i>
+							</div>
+						</div>
+						<div class="item">
+							<div class="img_show">
+								<img src="/static/img/5.jpg"/>
+							</div>
+							<div class="img_title">
+								5.png
+							</div>
+							<div class="img_isCheck">
+								<i class="iconfont icon-xuanzhong"></i>
+							</div>
+						</div>
+						<div class="item">
+							<div class="img_show">
+								<img src="/static/img/6.jpg"/>
+							</div>
+							<div class="img_title">
+								6.png
+							</div>
+							<div class="img_isCheck">
+								<i class="iconfont icon-xuanzhong"></i>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3"></div>
+	    			<div class="col-md-6">
+					    <div class="form-group">
+						    <label for="workName" class="col-sm-2 control-label">
+						    	<p>作品名称</p>
+						    </label>
+						    <div class="col-sm-10">
+						      <input type="text" class="form-control" id="workName" name="name">
+						    </div>
+					    </div>
+					    <div class="form-group">
+						    <label for="logoName" class="col-sm-2 control-label">
+						    	<p>关键字</p>
+						    </label>
+						    <div class="col-sm-10">
+						      <input type="text" class="form-control" id="logoName" name="desc">
+						    </div>
+					    </div>
+					</div>
+    			    <div class="col-md-12">
+    			    	<div class="form-group">
+					        <div class="generateBefore" id="generateBefore">
+					            <img src="/static/img/footerAI.jpg" alt="用户上传的图片" class="img-responsive">
+					        </div>
+						    <label for="fileWorks">
+						    	<div class="submitWorks">上传图片</div>
+						    	<input type="file" id="fileWorks" name="file" >
+						    </label>
+					    </div>
+    			    </div>
+
+    			</div>
+    	    </div>
+		</form>
+     <div class="col-md-12">
+    			    	<div class="generateAfter">
+    			    		<img src="/static/img/footerAI.jpg" id="generate_work" class="img-responsive" alt="生成的图片" style="margin: 0 auto";>
+    			    	</div>
+    			    </div>
+        <button id="generate" class=" submitWorks">自动生成</button>
+
+    </div>
+
+{% endblock %}
+
+{% block end_js %}
+
+
+    <script src="/static/js/jquery-1.11.3.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/wow.min.js"></script>
+    <script src="/static/js/ImageUpload.js"></script>
+    <script src="/static/js/selectImg.js"></script>
+
+    <script>
+      $(function(){
+            $('#generate').on('click', function(){
+                var obj2=document.getElementsByClassName("item");
+                for(var i=0;i<obj2.length;i++){
+                    if(obj2[i].getAttribute("ischecked")=== "true"){
+                        temp=i;
+                        break;
+                    }else{
+                        temp=-1;
+                    }
+                }
+                if(temp===-1){alert("请选择");return false;}
+
+                var formData = new FormData($('#styleform')[0]);
+                formData.append("style",temp);
+
+
+                $.ajax({
+                    cache: false,
+                    type: "post",
+                    url:"{% url 'works:generatestyle' %}",
+                    data:formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    },
+                    success: function(data) {
+                         if(data.status ==='success'){
+
+                             $("#generate_work").attr("src",data.image_path);
+                        }else if(data.status ==='fail'){
+                             var obj = eval(data);
+                            alert(obj['msg']);
+                            window.location.reload();
+
+                        }else {
+                            alert("服务器错误，请重试");
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+      })
+    </script>
+{% endblock %}

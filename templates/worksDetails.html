@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% block title %}更多作品{% endblock %}
+
+
+
+{% block custom_js %}
+
+    <script type="text/javascript" src="/static/js/index.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    <!-- 介绍条 -->
+    <div class="container-fluid introduce">
+    	<div class="row">
+    		<div class="col-md-12">
+    				<h1>作品详情<em>&nbsp;&nbsp;&nbsp;The work details</em></h1>
+    		</div>
+    	</div>
+    </div>
+
+    <!-- 图片详情展示部分 -->
+    <div class="worksDetails">
+    	<div class="container">
+    		<div class="row abcworks" >
+    			<!-- 左侧作品图片 -->
+                <div class="col-xs-12 col-md-6">
+                    <div class="works">
+                        <h3>生成前：{{ work.name }}</h3>
+                        <img class="img-responsive" src="{{ MEDIA_URL }}{{ userworks.material }}" alt="作品详情">
+                    </div>
+                </div>
+    			<div class="col-xs-12 col-md-6 ">
+    				<div class="works">
+    					<h3>生成后：{{ work.name }}</h3>
+    					<img class="img-responsive"src="{{ MEDIA_URL }}{{ work.image }}" alt="作品详情">
+    				</div>
+    			</div>
+            </div>
+
+            <div class="row">
+
+
+    			<div class="col-md-4 col-xs-12">
+
+    				<div class="workInstructions">
+    					<div class="button">
+    						<button id="download"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;<a style="color:#FFFFFF" href="{% url 'works:download' work.id %}" class="download">下载</a></button>
+                            <div id="fav"><button id="fav_text"><span class="glyphicon glyphicon-star" id="fav"></span>&nbsp;{% if has_fav_work %}已收藏{% else %}收藏{% endif %}</button></div>
+                            <div id="love"><button id="love_text"><span class="glyphicon glyphicon-thumbs-up" id="love"></span>&nbsp;{% if has_love_work %}已点赞{% else %}点赞{% endif %}</button></div>
+    					</div>
+    					<div class="count">
+                            <table width="100%">
+    						&nbsp;&nbsp;
+                           <tr > <td id="download_num" width="33%">
+                            <span class="glyphicon glyphicon-download-alt"></span>{{ work.download_nums }}
+                                </td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <td width="33%" id="fav_num"><span class="glyphicon glyphicon-star"></span>{{ work.fav_nums }}
+                                </td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    						<td  width="33%"id="love_num"><span class="glyphicon glyphicon-thumbs-up"></span>{{ work.love_nums }}
+                                </td>
+                                </tr>
+                                </table>
+    					</div>
+
+
+
+    					<div class="instructions">
+    						<table>
+
+    							<tr>
+    								<td>作品名称:</td>
+    								<td>{{ work.name }}</td>
+    							</tr>
+    							<tr>
+    								<td>关键词:</td>
+    								<td>{{ work.tag }}</td>
+    							</tr>
+    							<tr>
+    								<td>作者:</td>
+    								<td>{{ username }}</td>
+    							</tr>
+    							<tr>
+    								<td>发布日期:</td>
+    								<td>{{ work.add_time }}</td>
+    							</tr>
+    							<tr>
+    								<td>格式:</td>
+    								<td>xxxxx</td>
+    							</tr>
+    							<tr>
+    								<td>类型:</td>
+    								<td>xxxxxxxx</td>
+    							</tr>
+    							<tr>
+    								<td>尺寸:</td>
+    								<td>xxx*xxx像素</td>
+    							</tr>
+    							<tr>
+    								<td>大小:</td>
+    								<td>xxxMB</td>
+    							</tr>
+    						</table>
+    					</div>
+    				</div>
+    			</div>
+
+                <div class="col-xs-12 col-md-8">
+                        <!-- 讨论区 -->
+                    <div class="discussion">
+
+                    <h3>共{{ comments_num }}条评论</h3>
+                    <div class="media myDiscussion">
+                        <div class="media-left">
+                            <a href="#">
+                              <img class="media-object" src="{{ MEDIA_URL }}{{ user_image }}" alt="用户头像" >
+                              <h5 class="media-heading">{{ user_name }}</h5>
+                            </a>
+                        </div>
+                        <div class="media-body ">
+                            <form>
+                                <textarea class="form-control" rows="3" id="js-pl-textarea"></textarea>
+                                <input type="submit" class="mysubmit" id="js-pl-submit" value="评论">
+                            </form>
+                        </div>
+                    </div>
+
+                    {% for comment in all_comments %}
+                    <div class="media otherDiscussion">
+                        <ul>
+                            <li>
+                                <div class="media-left">
+                                    <a href="#">
+                                        <img class="media-object" src="{{ MEDIA_URL }}{{ comment.user.image }}" alt="...">
+                                        {% if comment.user.nick_name == "" %}
+                                        <h5 class="media-heading">{{ comment.user.username }}</h5>
+                                            {% else %}
+
+                                            <h5 class="media-heading">{{ comment.user.nick_name }}</h5>
+
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="media-body">
+                                    <h5 class="media-heading">{{ comment.user.name }}</h5>
+                                    <p>{{ comment.comments }}</p>
+                                    <span>{{ comment.add_time }}</span>&nbsp;
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {% endfor %}
+
+                    <!-- 翻页按钮 -->
+                    <div class="col-xs-12 discussionPage">
+                        <nav aria-label="Page navigation">
+                             <ul class="pagination">
+                                 {% if all_comments.has_previous %}
+                                     <li>
+                                         <a href="?{{ all_comments.previous_page_number }}" aria-label="Previous">
+                                             <span aria-hidden="true">上一页</span>
+                                         </a>
+                                     </li>
+                                 {% endif %}
+
+{#                                  这种方式会把所有的页码全部显示出来#}
+{#                                 {% for num in p.page_range %}#}
+{#                                     {% ifequal num page %}#}
+{#                                         <li class="active"><a href="?page={{ num }}">{{ page }}</a></li>#}
+{#                                     {% else %}#}
+{#                                         <li><a href="?page={{ num }}">{{ num }}</a></li>#}
+{#                                     {% endifequal %}#}
+{#                                 {% endfor %}#}
+
+
+
+
+                                 {% if page|add:-4 > 0  %}
+                                     <li><a href="?page={{ page|add:-1 }}">{{ page|add:-4 }}</a></li>
+                                 {% endif %}
+
+                                 {% if page|add:-3 > 0  %}
+                                     <li><a href="?page={{ page|add:-1 }}">{{ page|add:-3 }}</a></li>
+                                 {% endif %}
+                                 {% if page|add:-2 > 0  %}
+                                     <li><a href="?page={{ page|add:-1 }}">{{ page|add:-2 }}</a></li>
+                                 {% endif %}
+                                 {% if page|add:-1 > 0  %}
+                                     <li><a href="?page={{ page|add:-1 }}">{{ page|add:-1 }}</a></li>
+                                 {% endif %}
+                                 <li class="active"><a href="?page={{ page }}">{{ page }}</a></li>
+                                 {% if page|add:1 <= p.num_pages   %}
+                                     <li><a href="?page={{ page|add:1 }}">{{ page|add:1 }}</a></li>
+                                 {% endif %}
+                                 {% if page|add:2 <= p.num_pages  %}
+                                     <li><a href="?page={{ page|add:2 }}">{{ page|add:2 }}</a></li>
+                                 {% endif %}
+                                 {% if page|add:3 <= p.num_pages   %}
+                                     <li><a href="?page={{ page|add:3 }}">{{ page|add:3 }}</a></li>
+                                 {% endif %}
+
+                                 {% if page|add:4 <= p.num_pages   %}
+                                     <li><a href="?page={{ page|add:4 }}">{{ page|add:4 }}</a></li>
+                                 {% endif %}
+
+
+                                 {% if all_comments.has_next %}
+                                <li>
+                                    <a href="?page={{ all_comments.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">下一页</span>
+                                    </a>
+                                </li>
+                                 {% endif %}
+
+                             </ul>
+                        </nav>
+                    </div>
+
+
+
+    </div>
+                </div>
+
+    		</div>
+    	</div>
+    </div>
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+{% block indexcontent %}
+{% endblock %}
+
+{% block end_js %}
+{#<script type="text/javascript" src="/static/js/comment.js"></script>#}
+<script type="text/javascript">
+  $(function(){
+            $("#fav").click(function (){
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'works:add_fav' %}",
+                    data: {'fav_id':{{ work.id }}, 'fav_type':1},
+
+                    beforeSend:function(xhr, settings){
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                        },
+
+                    success: function(data) {
+                        if (data.status == 'fail') {
+                            if (data.msg == '用户未登录') {
+                                window.location.href = "/login/";
+                            } else {
+                                alert(data.msg)
+                            }
+
+                        } else if (data.status == 'success') {
+                            $("#fav_text").html('<span class="glyphicon glyphicon-star" id="fav"></span>&nbsp;'+data.msg);
+                            $("#fav_num").html( '<span class="glyphicon glyphicon-star" id="fav"></span>'+data.fav_num);
+                        }
+                    }
+                });
+            });
+            $("#love").click(function (){
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'works:add_love' %}",
+                    data: {'love_id':{{ work.id }}, 'love_type':1},
+                    beforeSend:function(xhr, settings){
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                        },
+
+                    success: function(data) {
+                        if (data.status == 'fail') {
+                            if (data.msg == '用户未登录') {
+                                window.location.href = "/login/";
+                            } else {
+                                alert(data.msg)
+                            }
+
+                        } else if (data.status == 'success') {
+                            $("#love_text").html('<span class="glyphicon glyphicon-thumbs-up" id="fav"></span>&nbsp;'+data.msg);
+                            $("#love_num").html( '<span class="glyphicon glyphicon-thumbs-up" id="love"></span>'+data.love_num);
+
+
+                        }
+                    }
+                });
+            });
+            $("#download").click(function (){
+                {#href="{% url 'works:download' work.id %}#}
+
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'works:add_download' %}",
+                    data: {'download_id':{{ work.id }}},
+                    beforeSend:function(xhr, settings){
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                        },
+
+                    success: function(data) {
+                        if (data.status == 'fail') {
+                            if (data.msg == '用户未登录') {
+                                window.location.href = "/login/";
+                            } else {
+                                alert(data.msg)
+                            }
+
+                        } else if (data.status == 'success') {
+                            $("#download_num").html( '<span class="glyphicon glyphicon-download-alt"></span>'+data.download_num);
+
+
+                        }
+                    }
+                });
+            });
+            $('#js-pl-submit').on('click', function(){
+                var comments = $("#js-pl-textarea").val()
+                if(comments == ""){
+                    alert("评论不能为空")
+                    return
+                }
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url:"{% url 'works:add_comment' %}",
+                    data:{'work_id':{{ work.id }}, 'comments':comments},
+                    async: true,
+                    beforeSend:function(xhr, settings){
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    },
+                    success: function(data) {
+                        if(data.status == 'fail'){
+                            if(data.msg == '用户未登录'){
+                                window.location.href="/login/";
+                            }else{
+                                alert(data.msg)
+                            }
+                        }else if(data.status == 'success'){
+
+                            window.location.reload();//刷新当前页面.
+
+                        }else {
+                            alert(data.status);
+                        }
+                    },
+                });
+            });
+  })
+</script>
+{% endblock %}
+
