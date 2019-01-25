@@ -17,6 +17,7 @@ class Works(models.Model):
     download_nums = models.IntegerField(default=0, verbose_name=u"下载数")
     image = models.ImageField(upload_to="works/%Y/%m", verbose_name=u"作品", max_length=100)
     desc = models.CharField(max_length=1500, verbose_name=u"说明")
+    task_id=models.CharField(max_length=50,default=None, verbose_name=u"任务id",null=True, blank=True)
     add_time = models.DateTimeField(default=datetime.now)
 
     class Meta:

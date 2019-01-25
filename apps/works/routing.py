@@ -24,6 +24,8 @@ from . import consumers
 # 如果你想保持一个独立的socket连接，你就必须建立一个单独的连接
 # 推荐使用类视图
 websocket_urlpatterns = [
-    url(r'^ws/chat/', consumers.MyConsumer),
+    path('ws/task/<str:task_id>/', consumers.MyConsumer),
+
+    # url(r'^ws/task/(?P<active_code>.*)/$', consumers.MyConsumer),
 ]
 

@@ -11,56 +11,62 @@
 {% block content %}
 
 
-    <!-- 功能部分 -->
-    <div class="function2">
-    	<form class="form-horizontal" id="imgform" enctype="multipart/form-data">
-    	    <div class="container">
-    		    <div class="row">
-	    			<div class="col-md-3"></div>
-	    			<div class="col-md-6">
-					    <div class="form-group">
-						    <label for="workName" class="col-sm-2 control-label">
-						    	<p>作品名称</p>
-						    </label>
-						    <div class="col-sm-10">
-						      <input type="text" class="form-control" id="workName" name="name">
-						    </div>
-					    </div>
-					    <div class="form-group">
-						    <label for="logoName" class="col-sm-2 control-label">
-						    	<p>关键字</p>
-						    </label>
-						    <div class="col-sm-10">
-						      <input type="text" class="form-control" id="logoName" name="desc">
-						    </div>
-					    </div>
-					</div>
-    			    <div class="col-md-12">
-    			    	<div class="form-group">
-					        <div class="generateBefore" id="generateBefore">
-					            <img src="/static/img/footerAI.jpg" alt="用户上传的图片" class="img-responsive">
-					        </div>
-						    <label for="fileWorks">
-						    	<div class="submitWorks">上传图片</div>
-						    	<input type="file" id="fileWorks" name="file" >
-						    </label>
-					    </div>
-    			    </div>
 
-
-    			</div>
-    	    </div>
-		</form>
-        <div class="col-md-12">
-    			    	<div class="generateAfter" >
-    			    		<img src="/static/img/footerAI.jpg" id="generate_work" class="img-responsive" alt="生成的图片"  style="margin: 0 auto";>
-    			    	</div>
-    			    </div>
-        <button id="generate" class="submitWorks">自动生成</button>
+    	<!--引导上传部分-->
 
 
 
-    </div>
+
+	<!--图片上传展示部分-->
+	<section class="function_show">
+		<div class="container">
+			<div class="row">
+                <div class="row">
+                    <div class="col-md-3 col-xs-12"></div>
+                    <div class="col-md-6 col-xs-12">
+                        <img src="" id="showImg" alt="" width="100%">
+                        <form class="form-horizontal" id="imgform" enctype="multipart/form-data">
+
+
+
+                            <div class="function_upload">
+
+
+	    <div class="upload">
+			<label for="imgUpload" class="imgUploadButton"><h3><span class="glyphicon glyphicon-plus"></span>请上传您的图片</h3></label>
+			<input type="file" name="file" id="imgUpload" accept="image/*">
+
+		</div>
+		<p>(否则将影响图片的生成质量)</p>
+	</div>
+                            <div class="form-group">
+                                <label for="imgTitle" class="col-sm-2 control-label">名称：</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="workName" name="name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="imgDes" class="col-sm-2 control-label">描述：</label>
+                                <div class="col-sm-10">
+						            <input type="text" class="form-control" id="logoName" name="desc">
+                                </div>
+                            </div>
+
+                        </form>
+                        <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" id="generate">点击生成</button>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+			</div>
+		</div>
+	</section>
+
+
+
+
 
 {% endblock %}
 
@@ -71,9 +77,8 @@
       $(function(){
             $('#generate').on('click', function(){
                 var formData = new FormData($('#imgform')[0]);
-{#                formData.append("file", $('#imgform')[0].files[0]);#}
 
-                formData.append("sort","3");
+                formData.append("sort","1");
 
                 $.ajax({
                     cache: false,
@@ -88,7 +93,9 @@
                     success: function(data) {
                          if(data.status ==='success'){
 
-                             $("#generate_work").attr("src",data.image_path);
+                             task_id=data.task_id;
+                             window.location.href={% url "process_html" %}+"?task_id="+task_id;
+
                         }else if(data.status ==='fail'){
                              var obj = eval(data);
                             alert(obj['msg']);
@@ -104,3 +111,5 @@
       })
     </script>
 {% endblock %}
+
+

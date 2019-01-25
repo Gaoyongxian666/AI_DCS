@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+
+</head>
+<body>
+<h1 id="message">正在生成中，请稍后。。。</h1>
+<!--进度条-->
+    <section class="function_progress">
+        <div id="prog_out" class="progress progress-striped active">
+            <div id="prog_in" class="progress-bar progress-bar-info"
+                 role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                 aria-valuemax="100" style="width: 0%;">
+            </div>
+        </div>
+    </section>
+
+
+<script src="/static/js/jquery-1.11.3.min.js"></script>
+<script src="/static/js/index.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+
+
+            var chatSocket = new WebSocket(
+                            'ws://' + window.location.host +
+                         '/ws/task/{{ task_id }}/');
+
+                chatSocket.onmessage = function(e) {
+                        var data = JSON.parse(e.data);
+                        var progress = data['progress'];
+                        var message=data['message'];
+
+                        $('#prog_in').width(progress + '%');
+
+                        $('#message').html(message);
+
+
+                        if (progress > 99 ){
+                            chatSocket.close();
+                            window.location.href='http://' + window.location.host +
+                                                     '/works/detail/0/?task_id={{ task_id }}';
+
+                        }
+
+
+                        };
+
+
+                chatSocket.onclose = function(e) {
+                      console.error('Chat socket closed unexpectedly');
+
+    };
+
+
+</script>
+<script>
+
+
+</script>
+
+</body>
+</html>

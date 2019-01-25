@@ -155,7 +155,71 @@
     <section class="show">
     	<div class="container">
 
+    		<!-- logo生成区展示 -->
+    		<div class="row Logo wow slideInUp" ata-wow-duration="2s" animation-delay="0.5s"  >
+    			<div class="col-md-12">
+    				<span class="glyphicon glyphicon-save showTit"> Logo生成</span>
+    			</div>
+    			<div class="row">
+                    <div class="col-xs-12 more">
+                        <a href="{% url 'works:works_list' %}?sort=0" target="blank">更多>></a>
+                    </div>
+{#                    {% for work in logo.object_list %}#}
+{#                    <div class="col-xs-6 col-md-3">#}
+{#                        <a href="{% url 'works:works_detail' work.id %}" class="thumbnail">#}
+{#                            <img src="{{ MEDIA_URL }}{{ work.image }}" alt="LOGO">#}
+{#                            <h6>#}
+{#                                <span class="glyphicon glyphicon-thumbs-up"><em>{{ work.love_nums }}</em></span>#}
+{#                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#}
+{#                                <strong><span class="glyphicon glyphicon-star"><em>{{ work.fav_nums }}</em></span></strong>#}
+{#                            </h6>#}
+{#                        </a>#}
+{##}
+{#                    </div>#}
+{#                    {% endfor %}#}
+                    <div class="col-xs-6 col-md-3">
+                        <a href="#" class="thumbnail">
+                            <img src="/static/img/partLogo.jpg" alt="LOGO">
+                            <h6>
+                                <span class="glyphicon glyphicon-thumbs-up"><em>2,234</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong><span class="glyphicon glyphicon-star"><em>2,234</em></span></strong>
+                            </h6>
+                        </a>
+                    </div>
 
+                    <div class="col-xs-6 col-md-3">
+                        <a href="#" class="thumbnail">
+                            <img src="/static/img/partLogo.jpg" alt="LOGO">
+                            <h6>
+                                <span class="glyphicon glyphicon-thumbs-up"><em>2,234</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong><span class="glyphicon glyphicon-star"><em>2,234</em></span></strong>
+                            </h6>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <a href="#" class="thumbnail">
+                            <img src="/static/img/partLogo.jpg" alt="LOGO">
+                            <h6>
+                                <span class="glyphicon glyphicon-thumbs-up"><em>2,234</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong><span class="glyphicon glyphicon-star"><em>2,234</em></span></strong>
+                            </h6>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <a href="#" class="thumbnail">
+                            <img src="/static/img/partLogo.jpg" alt="LOGO">
+                            <h6>
+                                <span class="glyphicon glyphicon-thumbs-up"><em>2,234</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong><span class="glyphicon glyphicon-star"><em>2,234</em></span></strong>
+                            </h6>
+                        </a>
+                    </div>
+                </div>
+    		</div>
 
     		<!-- 线稿上色区展示 -->
     		<div class="row wow slideInUp" ata-wow-duration="2s" animation-delay="1s">
@@ -211,16 +275,16 @@
                 </div>
     		</div>
 
-    		<!-- 线稿生成区展示 -->
+    		<!-- 灰度图上色区展示 -->
     		<div class="row wow slideInUp" data-wow-duration="2s" animation-delay="0.2s">
     			<div class="col-md-12">
-    				<span class="glyphicon glyphicon-eye-close showTit"> 生成线稿</span>
+    				<span class="glyphicon glyphicon-eye-close showTit"> 灰度图上色</span>
     			</div>
     			<div class="row">
                     <div class="col-xs-12 more">
-                        <a href="{% url 'works:works_list' %}?sort=6"  target="blank">更多>></a>
+                        <a href="{% url 'works:works_list' %}?sort=3"  target="blank">更多>></a>
                     </div>
-                     {% for work in linege %}
+                     {% for work in gray %}
 
                         <div class="col-xs-6 col-md-3">
 

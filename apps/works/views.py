@@ -1,27 +1,21 @@
 import json
+import os
+from AIDCS.tasks import do_painter,do_figure,do_ink,do_sketch,do_style,do_color
+
 from django.core.files.base import ContentFile
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.db.models import Q
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, JsonResponse
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.safestring import mark_safe
 from django.views import View
-from AIDCS import Main
 from AI_DCS.settings import MEDIA_URL, Active_IP
 from operation.models import UserFavorite, UserLove, UserWorks, WorksComments
 from utils.mixin_utils import LoginRequiredMixin
 from works.models import Works
-import os
-from utils.md5_utils import * 
 
 
-# 更多作品页面
-# 当前页码 分类代码
-# 0代表logo生成，1代表线稿上色，2代表风格生成，3代表灰度图上色，4代表水墨画生成，5代表人物转漫画
-# 默认页码为1，分类代码为6
-# 后台可以传值到前端
-# 前端不一定需要中继站，比如分类sort。完全可以从后台传入。。
 class WorksListView(View):
     def get(self, request):
         all_works = Works.objects.all().order_by("-add_time")
@@ -96,40 +90,17 @@ class WorksListView(View):
                        <p>闪亮亮的日系插画风小姐姐？</p>
                        <p>给我一张照片</p>
                        <p>下一个打破次元壁的俊男靓女就是您啦</p>'''
-        if sort == "6":
-            all_works = all_works.filter(tag__icontains="生成线稿")
-            intro = '''<h3>Figure Cartoon Transition </h3>
-                       <p>生成线稿</p>
-                       <p>给我一张照片</p>
-                       <p>生成动人的线条</p>'''
 
         search_keywords = request.GET.get('keywords', "")
         if search_keywords:
             all_works = all_works.filter(Q(name__icontains=search_keywords) | Q(desc__icontains=search_keywords))
-        all_works_=[]
-        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-        default_img_path = Base_dir + "/static/img/1.jpg"
-        md5="ec1d1b1554a049dad66ea68a306bfe1e"
-
-
-
-        for all_work in all_works:
-            image_path = all_work.image.path
-            img_md5=get_md5_01(image_path)
-
-            
-            if md5==img_md5:
-                continue
-            all_works_.append(all_work)
-            
 
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
             page = 1
 
-        p = Paginator(all_works_, 9)
+        p = Paginator(all_works, 9)
         works = p.page(page)
 
         # 下面这些都是针对p 就是分类器对象而言的
@@ -158,8 +129,7 @@ class WorksListView(View):
 
 
 
-# 作品详情
-# 作品id
+
 class WorksDetailView(View):
     def get(self, request, work_id):
         username="未知的"
@@ -173,10 +143,7 @@ class WorksDetailView(View):
             print(work_id)
             work = Works.objects.get(id=int(work_id))
             userworks = UserWorks.objects.filter(works=work)
-        
-
         if userworks:
-
             muser = userworks[0].user
             username = muser.username
 
@@ -188,7 +155,7 @@ class WorksDetailView(View):
             if request.user.image:
                 user_image=request.user.image
             else:
-                user_image="works/person.png"
+                user_image="works/2018/10/person.png"
             if request.user.nick_name == "":
                 user_name=request.user.username
             elif request.user.nick_name:
@@ -238,76 +205,8 @@ class WorksDetailView(View):
             "page": page,
             "p":p
         })
-'''
-class WorksDetailView(View):
-    # 这里可以获取到url中特定的字符串
-    def get(self, request, work_id):
-        username="未知的"
-        work = Works.objects.get(id=int(work_id))
-        userworks = UserWorks.objects.filter(works=work)
-        if userworks:
-            # user=userworks.user   'QuerySet' object has no attribute 'user'
-            muser = userworks[0].user
-            username = muser.username
 
 
-
-        # user 不能用
-        try:
-
-            if request.user.image:
-                user_image=request.user.image
-            else:
-                user_image="works/person.png"
-            if request.user.nick_name == "":
-                user_name=request.user.username
-            elif request.user.nick_name:
-                user_name=request.user.nick_name
-            else:
-                user_name="请登陆"
-        except AttributeError:
-            user_image = "works/2018/10/person.png"
-            user_name = "请登陆"
-
-        has_fav_work = False
-        has_love_work = False
-
-        # 'bool' object is not callable 不能使用request.user.is_authenticated():
-        if request.user.is_authenticated:
-            if UserFavorite.objects.filter(user=request.user, fav_id=work.id, fav_type=1):
-                has_fav_work = True
-            if UserLove.objects.filter(user=request.user, love_id=work.id, love_type=1):
-                has_love_work = True
-
-        all_comments = WorksComments.objects.filter(works=work).order_by("-id")
-        comment_num=all_comments.count()
-        user_list=[]
-        for comment in all_comments:
-            user_list.append(comment.user)
-        try:
-            page = request.GET.get('page', 1)
-        except PageNotAnInteger:
-            page = 1
-
-
-        p = Paginator(all_comments, 9)
-        comments = p.page(page)
-
-
-        return render(request, "worksDetails.html", {
-            "work": work,
-            "user_image":mark_safe(user_image),
-            "has_love_work": has_love_work,
-            "has_fav_work": has_fav_work,
-            "username": username,
-            'user_name': user_name,
-            "all_comments":comments,
-            "comments_num":comment_num,
-            "page": page,
-            "p":p
-        })
-
-'''
 
 # 添加评论
 class AddComentsView(View):
@@ -479,7 +378,11 @@ class GenerateGrayView(LoginRequiredMixin, View):
 
         material_path=userworks.material.path
 
-        userGenerateGray = ContentFile(open(r"/home/ai/AI_DCS/static/img/1.jpg", "rb").read())
+        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+        img_path = Base_dir + "/static/img/1.jpg"
+
+        userGenerateGray = ContentFile(open(Base_dir + "/static/img/1.jpg", "rb").read())
 
         # 保存生成的作品
         work.tag = tag
@@ -490,14 +393,20 @@ class GenerateGrayView(LoginRequiredMixin, View):
 
         # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
         # 线稿生成 sketch
-        Main.choose(model_name="Colornet",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
+
+        # Main.choose(model_name="Colornet",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
 
 
 
         userworks.works = work
         userworks.save()
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+        task_name = do_color.delay(content=material_path, output=work.image.path)
+        work.task_id = task_name
+        work.save()
+
+        data = {"status": "success", "task_id": str(task_name)}
+
         return HttpResponse(json.dumps(data), content_type="application/json")
     def get(self, request):
         return render(request, template_name="functionGray.html")
@@ -526,21 +435,36 @@ class GenerateLineArtView(LoginRequiredMixin, View):
 
         material_path=userworks.material.path
 
-        userGenerateGray = ContentFile(open(r"/home/ai/AI_DCS/static/img/1.jpg", "rb").read())
+        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+        img_path=Base_dir+"/static/img/1.jpg"
+        print(img_path)
+
+        defult= ContentFile(open(Base_dir+"/static/img/1.jpg", "rb").read())
 
         # 保存生成的作品
         work.tag = tag
         work.name = name
         work.desc = desc
-        work.image.save("work.jpg", userGenerateGray)
-        work.save()
+        work.image.save("work.jpg", defult)
 
-        Main.choose(model_name="Painter",content=material_path,output=work.image.path)
+
+
+
+
+        #
+
+        # Main.choose(model_name="Painter",content=material_path,output=work.image.path)
 
         userworks.works = work
         userworks.save()
+        # 这是同步，必须要结果，服务必须开这
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+        task_name = do_painter.delay(content=material_path, output=work.image.path)
+        work.task_id = task_name
+        work.save()
+
+        data={"status":"success","task_id": str(task_name)}
         return HttpResponse(json.dumps(data), content_type="application/json")
 
     def get(self, request):
@@ -569,7 +493,11 @@ class GenerateFigureView(LoginRequiredMixin, View):
 
         material_path=userworks.material.path
 
-        userGenerateGray = ContentFile(open(r"/home/ai/AI_DCS/static/img/1.jpg", "rb").read())
+        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+        img_path = Base_dir + "/static/img/1.jpg"
+
+        userGenerateGray = ContentFile(open(Base_dir + "/static/img/1.jpg", "rb").read())
 
         # 保存生成的作品
         work.tag = tag
@@ -580,14 +508,25 @@ class GenerateFigureView(LoginRequiredMixin, View):
 
         # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
         # 线稿生成 sketch
-        Main.choose(model_name="Figure",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
+        # Main.choose(model_name="Figure",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
 
 
 
         userworks.works = work
         userworks.save()
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+        userworks.works = work
+        userworks.save()
+        # 这是同步，必须要结果，服务必须开这
+
+        task_name = do_figure.delay(content=material_path, output=work.image.path)
+        work.task_id = task_name
+        work.save()
+
+        data = {"status": "success", "task_id": str(task_name)}
+
+
+
         return HttpResponse(json.dumps(data), content_type="application/json")
     def get(self, request):
         return render(request, template_name="functionComic.html")
@@ -615,8 +554,11 @@ class GenerateChineseView(LoginRequiredMixin, View):
 
         material_path=userworks.material.path
 
-        userGenerateGray = ContentFile(open(r"/home/ai/AI_DCS/static/img/1.jpg", "rb").read())
+        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+        img_path = Base_dir + "/static/img/1.jpg"
+
+        userGenerateGray = ContentFile(open(Base_dir + "/static/img/1.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag
         work.name = name
@@ -626,14 +568,22 @@ class GenerateChineseView(LoginRequiredMixin, View):
 
         # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
         # 线稿生成 sketch
-        Main.choose(model_name="Chinese",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
+        # Main.choose(model_name="Chinese",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
 
 
 
         userworks.works = work
         userworks.save()
+        userworks.works = work
+        userworks.save()
+        # 这是同步，必须要结果，服务必须开这
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+        task_name = do_ink.delay(content=material_path, output=work.image.path)
+        work.task_id = task_name
+        work.save()
+
+        data = {"status": "success", "task_id": str(task_name)}
+
         return HttpResponse(json.dumps(data), content_type="application/json")
     def get(self, request):
         return render(request, template_name="functionChinese.html")
@@ -662,8 +612,11 @@ class GenerateLineView(LoginRequiredMixin, View):
 
         material_path=userworks.material.path
 
-        userGenerateGray = ContentFile(open(r"/home/ai/AI_DCS/static/img/1.jpg", "rb").read())
+        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+        img_path = Base_dir + "/static/img/1.jpg"
+
+        userGenerateGray = ContentFile(open(Base_dir + "/static/img/1.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag
         work.name = name
@@ -671,20 +624,25 @@ class GenerateLineView(LoginRequiredMixin, View):
         work.image.save("work.jpg", userGenerateGray)
         work.save()
 
-        Main.choose(model_name="Sketch",content=material_path,output=work.image.path)
+        # Main.choose(model_name="Sketch",content=material_path,output=work.image.path)
 
         userworks.works = work
         userworks.save()
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+        userworks.works = work
+        userworks.save()
+        # 这是同步，必须要结果，服务必须开这
+
+        task_name = do_sketch.delay(content=material_path, output=work.image.path)
+        work.task_id = task_name
+        work.save()
+
+        data = {"status": "success", "task_id": str(task_name)}
+
         return HttpResponse(json.dumps(data), content_type="application/json")
 
     def get(self, request):
         return render(request, template_name="functionLine.html")
-
-
-
-
 
 class GenerateStyleView(LoginRequiredMixin, View):
     def post(self, request):
@@ -712,7 +670,11 @@ class GenerateStyleView(LoginRequiredMixin, View):
 
         material_path=userworks.material.path
 
-        userGenerateGray = ContentFile(open(r"/home/ai/AI_DCS/static/img/1.jpg", "rb").read())
+        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+        img_path = Base_dir + "/static/img/1.jpg"
+
+        userGenerateGray = ContentFile(open(Base_dir + "/static/img/1.jpg", "rb").read())
 
         # 保存生成的作品
         work.tag = tag
@@ -738,12 +700,21 @@ class GenerateStyleView(LoginRequiredMixin, View):
             style_model="/home/ai/AI_DCS/AIDCS/StyleTransfer/models/udnie.ckpt"
 
 
-        Main.choose(model_name="StyleTransfer",content=material_path,output=work.image.path,style_model = style_model)
+        # Main.choose(model_name="StyleTransfer",content=material_path,output=work.image.path,style_model = style_model)
 
 
 
         userworks.works = work
         userworks.save()
+        userworks.works = work
+        userworks.save()
+        # 这是同步，必须要结果，服务必须开这
+
+        task_name = do_style.delay(content=material_path, output=work.image.path,style_model = style_model)
+        work.task_id = task_name
+        work.save()
+
+        data = {"status": "success", "task_id": str(task_name)}
 
         data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
         return HttpResponse(json.dumps(data), content_type="application/json")
@@ -773,7 +744,11 @@ class GenerateLogoView(LoginRequiredMixin, View):
 
         material_path=userworks.material.path
 
-        userGenerateGray = ContentFile(open(r"/home/ai/AI_DCS/static/img/1.jpg", "rb").read())
+        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+        img_path = Base_dir + "/static/img/1.jpg"
+
+        userGenerateGray = ContentFile(open(Base_dir + "/static/img/1.jpg", "rb").read())
 
         # 保存生成的作品
         work.tag = tag
@@ -784,7 +759,7 @@ class GenerateLogoView(LoginRequiredMixin, View):
 
         # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
         # 线稿生成 sketch
-        Main.choose(model_name="Colornet",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
+        # Main.choose(model_name="Colornet",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
 
 
 

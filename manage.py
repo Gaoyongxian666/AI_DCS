@@ -3,6 +3,9 @@ import os
 import sys
 
 if __name__ == "__main__":
+    AIDCS_Celery_dir=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print(AIDCS_Celery_dir)
+    sys.path.append(AIDCS_Celery_dir)
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AI_DCS.settings")
     try:
         from django.core.management import execute_from_command_line

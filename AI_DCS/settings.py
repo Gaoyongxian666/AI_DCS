@@ -11,124 +11,121 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-
+import sys
 
 import logging
 import django.utils.log
 import logging.handlers
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+AIDCS_Celery_dir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+"/AIDCS"
+
+sys.path.append(AIDCS_Celery_dir)
 
 BASE_LOG_DIR = os.path.join(BASE_DIR, "log")
 
+ASGI_APPLICATION = 'AI_DCS.routing.application'
 
 
 
-LOGGING = {
-    'version': 1,  # 保留字
-    'disable_existing_loggers': False,  # 禁用已经存在的logger实例
-    # 日志文件的格式
-    'formatters': {
-        # 详细的日志格式
-        'standard': {
-            'format': '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]'
-                      '[%(levelname)s][%(message)s]'
-        },
-        # 简单的日志格式
-        'simple': {
-            'format': '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]%(message)s'
-        },
-        # 定义一个特殊的日志格式
-        'collect': {
-            'format': '%(message)s'
-        }
-    },
-    # 过滤器
-    'filters': {
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
-        },
-    },
-    # 处理器
-    'handlers': {
-        # 在终端打印
-        'console': {
-            'level': 'DEBUG',
-            'filters': ['require_debug_true'],  # 只有在Django debug为True时才在屏幕打印日志
-            'class': 'logging.StreamHandler',  #
-            'formatter': 'simple'
-        },
-        # 默认的
-        'default': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',  # 保存到文件，自动切
-            'filename': os.path.join(BASE_LOG_DIR, "aidcs_info.log"),  # 日志文件
-            'maxBytes': 1024 * 1024 * 50,  # 日志大小 50M
-            'backupCount': 3,  # 最多备份几个
-            'formatter': 'standard',
-            'encoding': 'utf-8',
-        },
-        # 专门用来记错误日志
-        'error': {
-            'level': 'ERROR',
-            'class': 'logging.handlers.RotatingFileHandler',  # 保存到文件，自动切
-            'filename': os.path.join(BASE_LOG_DIR, "aidcs_err.log"),  # 日志文件
-            'maxBytes': 1024 * 1024 * 50,  # 日志大小 50M
-            'backupCount': 5,
-            'formatter': 'standard',
-            'encoding': 'utf-8',
-        },
-        # 专门定义一个收集特定信息的日志
-        'collect': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',  # 保存到文件，自动切
-            'filename': os.path.join(BASE_LOG_DIR, "aidcs_collect.log"),
-            'maxBytes': 1024 * 1024 * 50,  # 日志大小 50M
-            'backupCount': 5,
-            'formatter': 'collect',
-            'encoding': "utf-8"
-        },
-        # 用于文件输出
-        'file_handler': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename':os.path.join(BASE_LOG_DIR, "aidcs_all.log"),
-            'formatter':'standard'
-         },
-        'mail_admins': {
-             'level': 'ERROR',
-             'class': 'django.utils.log.AdminEmailHandler',
-              'formatter':'standard'
-         },
-
-    },
-    'loggers': {
-       # 默认的logger应用如下配置
-        '': {
-            'handlers': ['default','file_handler', 'console', 'error'],  # 上线之后可以把'console'移除
-            'level': 'DEBUG',
-            'propagate': True,  # 向不向更高级别的logger传递
-        },
-        # 名为 'collect'的logger还单独处理
-        'collect': {
-            'handlers': ['console', 'collect'],
-            'level': 'INFO',
-        },
-        #  注意:loggers类型为"django"这将处理所有类型日志。sourceDns.webdns.views 应用的py文件
-        'django': {
-             'handlers': ['console','file_handler'],
-             'level':'DEBUG',
-             'propagate': True,
-         },
-         'django.request': {
-             'handlers': ['mail_admins'],
-             'level': 'ERROR',
-             'propagate': False,
-         },
-
-
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'standard': {
+#             'format': '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]'
+#                       '[%(levelname)s][%(message)s]'
+#         },
+#         'simple': {
+#             'format': '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]%(message)s'
+#         },
+#         'collect': {
+#             'format': '%(message)s'
+#         }
+#     },
+#     'filters': {
+#         'require_debug_true': {
+#             '()': 'django.utils.log.RequireDebugTrue',
+#         },
+#     },
+#
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'filters': ['require_debug_true'],
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'simple'
+#         },
+#         'default': {
+#             'level': 'INFO',
+#             'class': 'logging.handlers.RotatingFileHandler',
+#             'filename': os.path.join(BASE_LOG_DIR, "aidcs_info.log"),
+#             'maxBytes': 1024 * 1024 * 50,
+#             'backupCount': 3,
+#             'formatter': 'standard',
+#             'encoding': 'utf-8',
+#         },
+#
+#         'error': {
+#             'level': 'ERROR',
+#             'class': 'logging.handlers.RotatingFileHandler',
+#             'filename': os.path.join(BASE_LOG_DIR, "aidcs_err.log"),
+#             'maxBytes': 1024 * 1024 * 50,
+#             'backupCount': 5,
+#             'formatter': 'standard',
+#             'encoding': 'utf-8',
+#         },
+#
+#         'collect': {
+#             'level': 'INFO',
+#             'class': 'logging.handlers.RotatingFileHandler',
+#             'filename': os.path.join(BASE_LOG_DIR, "aidcs_collect.log"),
+#             'maxBytes': 1024 * 1024 * 50,
+#             'backupCount': 5,
+#             'formatter': 'collect',
+#             'encoding': "utf-8"
+#         },
+#
+#
+#         'file_handler': {
+#             'level': 'DEBUG',
+#             'class': 'logging.handlers.RotatingFileHandler',
+#             'filename':os.path.join(BASE_LOG_DIR, "aidcs_all.log"),
+#             'maxBytes': 1024 * 1024 * 50,
+#             'backupCount': 5,
+#             'formatter':'standard'
+#          },
+#         'mail_admins': {
+#              'level': 'ERROR',
+#              'class': 'django.utils.log.AdminEmailHandler',
+#               'formatter':'standard'
+#          },
+#
+#     },
+#     'loggers': {
+#         '': {
+#             'handlers': ['default', 'console', 'error'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'collect': {
+#             'handlers': ['console', 'collect'],
+#             'level': 'INFO',
+#         },
+#         'django': {
+#              'handlers': ['console','file_handler'],
+#              'level':'DEBUG',
+#              'propagate': True,
+#          },
+#          'django.request': {
+#              'handlers': ['mail_admins'],
+#              'level': 'ERROR',
+#              'propagate': False,
+#          },
+#
+#
+#     },
+# }
 
 
 
@@ -140,7 +137,7 @@ from django.conf.global_settings import DATA_UPLOAD_MAX_NUMBER_FIELDS
 
 sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
 sys.path.insert(0,os.path.join(BASE_DIR, 'extra_apps'))
-sys.path.insert(0,os.path.join(BASE_DIR, 'extra_apps/AIDCS'))
+#sys.path.insert(0,os.path.join(BASE_DIR, 'AIDCS'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -149,7 +146,7 @@ sys.path.insert(0,os.path.join(BASE_DIR, 'extra_apps/AIDCS'))
 SECRET_KEY = 'qp5wa05m41^eb*f%)i7m1_bh+^%5)$hdd^2lzp(rkg$k)nr0iz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
+DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.101','0.0.0.0','127.0.0.1','121.193.204.81','106.13.37.131','www.aidcs.cn','aidcs.cn']
 
@@ -168,6 +165,7 @@ INSTALLED_APPS = [
     'users',
     'captcha',
     'works',
+    "channels",
     'operation'
 ]
 
@@ -215,7 +213,7 @@ DATABASES = {
     'default':
         {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'aidcs02',
+            'NAME': 'aidcs',
 
             'USER': 'root',
             'PASSWORD': '8831366.',
@@ -267,11 +265,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-#生产
-STATIC_ROOT = '/home/ai/AI_DCS/static/'
-
-#调试
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
@@ -286,6 +279,5 @@ EMAIL_FROM = "no-reply@aidcs.cn"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-Active_IP='http://106.13.37.131'
-#'http://www.aidcs.cn'
+Active_IP='http://106.13.37.131'#'http://www.aidcs.cn'
 

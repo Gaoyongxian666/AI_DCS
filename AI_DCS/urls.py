@@ -19,9 +19,12 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 
 import xadmin
+
+from operation import views
 from users.views import LoginView, RegisterView, AciveUserView, LogoutView, IndexView
 from django.conf import settings
 from django.conf.urls.static import static
+
 
 
 urlpatterns = [
@@ -59,6 +62,10 @@ urlpatterns = [
 
     url(r'^active/(?P<active_code>.*)/$', AciveUserView.as_view(), name="user_active"),
     path('logout/', LogoutView.as_view(), name="logout"),
+
+    path('process_html/', views.process_html, name='process_html'), # 处理数据的url, 当前页面的地址
+    path('progressurl/', views.show_progress, name='progress'), # 查询进度的url, 不需要html页面
+
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

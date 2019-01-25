@@ -339,8 +339,6 @@ class IndexView(View):
         lineart=Works.objects.all().filter(tag__icontains="线稿上色").order_by('-love_nums')[:4]
         figure=Works.objects.all().filter(tag__icontains="生成动漫").order_by('-love_nums')[:4]
         gray=Works.objects.all().filter(tag__icontains="灰度图上色").order_by('-love_nums')[:4]
-        linege=Works.objects.all().filter(tag__icontains="生成线稿").order_by('-love_nums')[:4]
-
 
         # print(style)
 
@@ -362,8 +360,6 @@ class IndexView(View):
             "figure": figure,
             "gray": gray,
             "chinese": chinese,
-            "linege":linege
-
 
         })
 
