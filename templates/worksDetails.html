@@ -22,7 +22,7 @@
     <!-- 图片详情展示部分 -->
     <div class="worksDetails">
     	<div class="container">
-    		<div class="row">
+    		<div class="row abcworks" >
     			<!-- 左侧作品图片 -->
                 <div class="col-xs-12 col-md-6">
                     <div class="works">
@@ -36,12 +36,11 @@
     					<img class="img-responsive"src="{{ MEDIA_URL }}{{ work.image }}" alt="作品详情">
     				</div>
     			</div>
-{#    			<div class="col-md-8 col-xs-12">#}
-{#    				<div class="works">#}
-{#    					<h3>作品名称：{{ work.name }}</h3>#}
-{#    					<img class="img-responsive"src="{{ MEDIA_URL }}{{ work.image }}" alt="作品详情">#}
-{#    				</div>#}
-{#    			</div>#}
+            </div>
+
+            <div class="row">
+
+
     			<div class="col-md-4 col-xs-12">
 
     				<div class="workInstructions">
@@ -105,20 +104,11 @@
     					</div>
     				</div>
     			</div>
-    		</div>
-    	</div>
-    </div>
 
+                <div class="col-xs-12 col-md-8">
+                        <!-- 讨论区 -->
+                    <div class="discussion">
 
-
-
-
-        <!-- 讨论区 -->
-    <div class="discussion">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-8">
                     <h3>共{{ comments_num }}条评论</h3>
                     <div class="media myDiscussion">
                         <div class="media-left">
@@ -226,12 +216,21 @@
                              </ul>
                         </nav>
                     </div>
-                </div>
-                <div class="col-md-2"></div>
 
-            </div>
-        </div>
+
+
     </div>
+                </div>
+
+    		</div>
+    	</div>
+    </div>
+
+
+
+
+
+
 
 
 {% endblock %}
@@ -349,8 +348,7 @@
                             }
                         }else if(data.status == 'success'){
 
-                            window.location.href='http://' + window.location.host +
-                                                     '/works/detail/0/?task_id={{ task_id }}';
+                            window.location.reload();//刷新当前页面.
 
                         }else {
                             alert(data.status);
@@ -361,3 +359,4 @@
   })
 </script>
 {% endblock %}
+

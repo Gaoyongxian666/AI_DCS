@@ -53,7 +53,16 @@ $(function(){
         });//end blur
 
         
-
+        //提交注册，最终验证。
+        // $('#send').click(function(){
+        //     $("form :input.required").trigger('blur');
+        //     var numError = $('form .onError').length;
+        //     if(numError){
+        //         return false;
+        //     }
+        //     alert("注册成功,点击'确定'跳转用户登录界面");
+        //     window.open('http://121.193.204.81:8000/login/');
+        // });
 
 
         //提交登录，最终验证。

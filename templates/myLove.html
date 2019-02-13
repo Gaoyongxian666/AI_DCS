@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}个人点赞{% endblock %}
+{% block custom_js %}
+    <script type="text/javascript" src="/static/js/index.js"></script>
+
+{% endblock %}
 
 {% block content %}
    <!-- 介绍条 -->
@@ -21,7 +25,6 @@
     				<a href="{% url 'users:my_message' %}" class="list-group-item "><span class="glyphicon glyphicon-envelope"></span>&nbsp;我的消息</a>
     				<a href="{% url 'users:myfav_works' %}" class="list-group-item  "><span class="glyphicon glyphicon-star"></span>&nbsp;我的收藏</a>
     				<a href="{% url 'users:mylove_works' %}" class="list-group-item Active "><span class="glyphicon glyphicon-shopping-cart"></span>&nbsp;我的点赞</a>
-    				<a href="mySettings.html" class="list-group-item "><span class="glyphicon glyphicon-cog"></span>&nbsp;设&nbsp;&nbsp;&nbsp;&nbsp;置</a>
     			</div>
     		</div>
     		<!-- 我的资料 -->
@@ -126,7 +129,6 @@
 
 {% block end_js %}
 {#    这里不是相对路径而是请求的绝对路径#}
-<script src="/static/js/index.js"></script>
 
 {% endblock %}
 

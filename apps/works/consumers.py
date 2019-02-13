@@ -16,33 +16,29 @@ class MyConsumer(WebsocketConsumer):
 
         r = redis.Redis(host='localhost', port=6379, decode_responses=True, db=0)
 
-        i=0
+        i = 0
         while True:
             i = i + 1
             time.sleep(2)
-            if i>80:
-                i=80
+            if i > 80:
+                i = 80
             self.send(text_data=json.dumps({
-                    "progress": i,
-                    "message": "正在生成中。。。。"
-                }))
+                "progress": i,
+                "message": "正在生成中。。。。"
+            }))
 
-
-            cur_task_id_name = 'celery-task-meta-'+self.task_id
+            cur_task_id_name = 'celery-task-meta-' + self.task_id
             flag = r.exists(cur_task_id_name)
 
             if flag:
                 r.delete(cur_task_id_name)
-                i=100
+                i = 100
                 self.send(text_data=json.dumps({
                     "progress": i,
                     "message": "任务完成"
                 }))
                 print("任务完成，删除任务")
                 break
-
-
-           
 
             # 取前一百个等待队列
             wait_task = r.lrange('celery', 0, 100)
@@ -57,7 +53,7 @@ class MyConsumer(WebsocketConsumer):
                 task_id_ = wait_task_one_dict["headers"]["id"]
                 if self.task_id == task_id_:
                     # 记得加一个
-                    number=index+1
+                    number = index + 1
                     self.send(text_data=json.dumps({
                         "progress": i,
                         "message": "请稍等，您前面还有%d人" % number
@@ -68,24 +64,20 @@ class MyConsumer(WebsocketConsumer):
 
 
 
-            # if i>=6:
-            #     print('kaishi   ')
-            #     myControl=Control(app)
-            #     myControl.revoke(task_id=self.task_id, terminate=True)
-            #     print("jieshu")
-            #     break
-
-
-
+                    # if i>=6:
+                    #     print('kaishi   ')
+                    #     myControl=Control(app)
+                    #     myControl.revoke(task_id=self.task_id, terminate=True)
+                    #     print("jieshu")
+                    #     break
 
     def disconnect(self, close_code):
         print("dis")
+        print("disdssssssssssssssssss")
+
         self.close()
-        myControl = Control(app)
-        myControl.revoke(task_id=self.task_id, terminate=True)
+        app.control.revoke(task_id=self.task_id)
         print("不正常去除任务")
-
-
 
     # accept（）不执行完，就不会执行receive
     def receive(self, text_data):

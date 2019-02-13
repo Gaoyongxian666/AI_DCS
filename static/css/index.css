@@ -12,7 +12,7 @@
 }
 .nav .logo-nav ul li a{
 	color:#fff;
-} 
+}
 .nav .register ul li a{
 	color: #fff;
 	text-shadow:0 0 5px #aab, 0 0 10px #CCC, 0 0 15px #01A0EC, 0 0 20px #01A0EC, 0 0 25px #01A0EC, 0 0 30px #01A0EC, 0 0 50px #01A0EC, 0 0 80px #01A0EC, 0 0 100px #01A0EC, 0 0 150px #01A0EC;
@@ -20,7 +20,7 @@
 }
 .nav .logo-nav ul li a:hover{
 	color:#01A0EC;
-} 
+}
 .nav .register ul li a:hover{
     color:#848484;
 }
@@ -75,7 +75,15 @@
     	display: inline-block;
         width:100px;
         height: 50px;
-        margin-top:5px;
+        margin-top:0px;
+		margin-bottom: 15px;
+    }
+	nav.navSmaller img.rightNavHead{
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    margin-top: 5px;
+    margin-bottom: 10px;
     }
     nav.navSmaller button{
     	width:50px;
@@ -92,7 +100,7 @@
     color: #01A0EC;
     line-height: 27px;
     }
-    
+
     nav.navSmaller .rigtNav {
 	    width: 100px;
 	    margin-top: 10px;
@@ -109,18 +117,15 @@
 	    font-size: 14px;
 	    text-align: center;
     }
-	img.rightNavHead {
-		border-radius: 50%;
-		max-height: 50px;
-		max-width: 50px;
-	}
     .demo{
     	display: none;
     }
     .footer .cover{
-    	display:none; 
+    	display:none;
     }
 }
+
+
 
 /*
  *
@@ -128,12 +133,13 @@
  *
  *
  */
+
 footer .container-fluid{
-	padding: 0;	
+	padding: 0;
 }
 footer .footer{
 	height:auto;
-	background:url('../img/footer.jpg') no-repeat; 
+	background:url('../img/footer.jpg') no-repeat;
 	background:cover;
 }
 footer .footer .cover{
@@ -151,6 +157,7 @@ footer .footer .introduce{
     padding: 20px;
     transition:all 1s;
 }
+
 footer .footer .introduce:hover{
 	transform: scale(1.1);
 }
@@ -168,7 +175,7 @@ footer .footer .new{
 	height: auto;
 	background-color: #1F1F1F;
 	color: #fff;
-	
+
 	padding: 20px;
 }
 
@@ -186,6 +193,7 @@ footer .footer .new{
 /*各个功能介绍*/
 .functionIndex {
 	margin-top:10px;
+	margin-bottom: 50px;
 }
 .functionIndex .starTop{
     margin-bottom: 20px;
@@ -258,7 +266,7 @@ footer .footer .new{
 /*各个图片展示*/
 .show {
 	margin-top: 20px;
-	/*text-align: center;*/
+	text-align: center;
 	margin-bottom: 30px;
 }
 .show .wow{
@@ -296,9 +304,13 @@ footer .footer .new{
 	display: inline-block;
 	color: #01A0EC;
 }
+
 .show .showPart ul li span,
 .show .showPart ul li span em{
 	font-size: 13px;
+}
+.show .col-xs-12.more {
+    text-align: right;
 }
 /*
  *
@@ -307,7 +319,9 @@ footer .footer .new{
  *
  */
 .nav .register img{
-	width:80px;
+	width:50px;
+	height:50px;
+	border-radius: 50%;
 	margin-top: -23px;
 
 }
@@ -322,10 +336,12 @@ footer .footer .new{
  *
  *
  */
+
+
 /*左侧介绍条*/
 .introduce{
 	margin-top:60px;
-	box-shadow: 
+	box-shadow:
 	            1px 1px 12px 1px rgba(31,31,31,.2);
     border-radius: 4px;
     /*padding: 15px 0;*/
@@ -341,6 +357,7 @@ footer .footer .new{
 .person{
 	margin-top:30px;
 }
+
 .person .list-group a{
 	letter-spacing: 6px;
 	text-align: center;
@@ -355,6 +372,7 @@ footer .footer .new{
 	margin-bottom: 50px;
 	border-bottom: 1px solid #ddd;
 }
+
 .perData .perDataHead .head img{
 	width:90px;
 	height: 90px;
@@ -376,6 +394,7 @@ footer .footer .new{
 	letter-spacing: 3px;
 }
 /*个人信息修改*/
+
 .person .perData button {
     width: 100%;
     height: 38px;
@@ -413,6 +432,7 @@ footer .footer .new{
  *
  *
  */
+
 .perWorks .thumbnail{
     margin-bottom: 6px;
     margin-top: 12px;
@@ -429,6 +449,7 @@ footer .footer .new{
  *
  *
  */
+
 .perShow  .showPart img{
 	width: 100%;
 	margin-top: 13px;
@@ -447,6 +468,7 @@ footer .footer .new{
 	display: inline-block;
 	color: #01A0EC;
 }
+
 .perShow  .showPart ul li span,
 .perShow  .showPart ul li span em{
 	font-size: 13px;
@@ -545,6 +567,7 @@ footer .footer .new{
 	box-shadow: 0 1px 5px rgb(255,255,255), 0 1px 15px rgb(255,255,255);
 	height:35px;
 }
+
 .moreWorksIntroduce .layer .search{
 	text-align: right;
 	margin-top: 20px;
@@ -591,6 +614,7 @@ footer .footer .new{
 	display: inline-block;
 	color: #01A0EC;
 }
+
 .showbg .moreWorksShow .showPart ul li span,
 .showbg .moreWorksShow .showPart ul li span em{
 	font-size: 13px;
@@ -619,14 +643,11 @@ footer .footer .new{
 	padding-top:5px;
 }
 .worksDetails .works h3{
-	font-size: 25px;
+	font-size: 20px;
 	padding-bottom: 5px;
-	color: #01A0EC;
-	font-weight: 600;
-	letter-spacing: 4px;
 }
 .worksDetails .workInstructions{
-	margin-top: 20px;
+    margin-top: 20px;
 	background-color: #fff;
 	padding: 20px;
 	padding-top: 30px;
@@ -640,6 +661,14 @@ footer .footer .new{
 	color:#fff;
 	letter-spacing: 4px;
 }
+.row.abcworks {
+    margin-bottom: 30px;
+}
+.discussion {
+    background-color: white;
+    padding-left: 20px;
+    padding-right: 20px;
+}
 .worksDetails .workInstructions .count{
 	margin-bottom: 20px;
 }
@@ -648,20 +677,12 @@ footer .footer .new{
     height: 30px;
     /*border: 1px solid black;*/
 }
-.discussion {
-	background: #fff;
-	padding: 10px;
-	margin-top: 20px;
-}
-.discussion .discussionPage{
-	background-color: #fff;
-}
 .discussion .media img{
 	width:80px;
 	height: 80px;
 }
 .discussion .myDiscussion{
-	padding:0 0 10px 0; 
+	padding:0 0 10px 0;
 	border-bottom: 1px solid rgba(31,31,31,.2);
 }
 .discussion h3 {
@@ -760,6 +781,7 @@ footer .footer .new{
 	text-align: center;
 	margin-bottom: 130px;
 }
+
 .function .submitLogo {
     border-radius: 4px;
     width: 80px;
@@ -813,105 +835,61 @@ footer .footer .new{
  *
  *
  */
-.function_upload{
-    margin-top: 60px;
-    text-align: center;
-    background: url("/static/img/function_line2.jpg") center center;
-    padding-top: 100px;
-	padding-bottom: 2.5vw;
-}
-.function_upload h3{
-    color: #01A0EC;
-    font-weight: bold;
+ .function2{
+ 	margin-top: 70px;
+ 	padding:60px 0;
+ 	text-align: center;
+ 	margin-bottom: 10px;
+ }
+ .function2 .form-group{
+ 	margin-bottom: 30px;
+ }
+ .function2 .form-group img{
+ 	display: inline-block;
+ }
+ .function2 .form-group #fileWorks{
+ 	display: none;
+ }
+.function2 .form-group .submitWorks {
+    background-color: #01A0EC;
+    margin: 40px 30px 0px;
+    color: #fff;
     letter-spacing: 3px;
-	font-size: 2vw;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
 }
-.function_upload h3:hover{
+.function2 .form-group .submitWorks:hover{
+	background-color: #848484;
+}
+.function2 .form-group .WorksSubmit{
+	background-color: #848484;
 	color: #fff;
-	transition: all 1s ease-in-out 0s;
-
+    letter-spacing: 3px;
+    padding: 16px;
+    text-align: center;
 }
-.function_upload h3>span{
-	font-size: 2vw;
+.function2 .form-group .WorksSubmit:hover{
+	background-color: #01A0EC;
 }
-.function_upload p{
-    line-height: 50px;
-    color: #797979;
-    font-size: 2vw;
-    font-weight: 500;
+.function2 .generateAfter{
+	margin-bottom: 60px;
 }
-.imgUploadButton{
-	border: 3px solid #01A0EC;
-	padding:10px;
-    /*line-height: 50px;*/
-	background: #fff;
-	transition: all 1s ease-in-out 0s;
-	/*margin-bottom:3vw;*/
+.function2 .detail{
+	background-color: #01A0EC;
+    color: #fff;
+    letter-spacing: 3px;
+    padding: 16px;
+    text-align: center;
 }
-.imgUploadButton:hover{
-	background: #01A0EC;
-	cursor: pointer;
-	transition: all 1s ease-in-out 0s;
-}
-.upload input[type="file"]{
-	display: none;
-}
-.function_show{
-	padding-top: 50px;
-}
-.function_show form{
-	margin-top: 50px;
-}
-.function_show input#imgTitle ,textarea#imgDes{
-	border: 3px solid #01A0EC;
-	color: #01A0EC;
-}
-.function_show label.col-sm-2.control-label {
-	color:  #797979;
-	padding-top: 0px;
-	margin-bottom: 0;
-	text-align: left;
+.function2 h3.selectH3{
+    margin-top: -25px;
 	letter-spacing: 2px;
 }
-.function_show button[type="submit"]{
-	border: 3px solid #797979;
-	width:180px;
-	height: 50px;
-	/*line-height: 50px;*/
-	background: #fff;
-	transition: all 1s ease-in-out 0s;
-	/*margin-bottom:3vw;*/
+.function2 h3.selectH3>span.glyphicon-hand-down{
+	font-size: 30px;
 	color: #01A0EC;
-	font-size: 20px;
-	font-weight: bold;
-	letter-spacing: 3px;
 }
-
-.function_progress{
-	margin-top: 25%;
-}
-/*style页的特殊部分*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
  *
  *挑战杯网页功能介绍页
@@ -1102,6 +1080,3 @@ footer .footer .new{
 	text-shadow: 0 1px 5px rgb(255,160,255),
 	0 1px 15px rgb(255,160,55);
 }
-
-
-
