@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>AI-DCS注册</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><!-- 渲染IE8 -->
+	<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css" type="text/css"/>
+	<link rel="stylesheet" href="/static/css/bootstrap-theme.min.css" type="text/css"/>
+	<link rel="stylesheet" href="/static/css/register.css" type="text/css" />
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 logo" >
+				<img src="/static/img/logo.png" alt="AI-DCS">
+				<h3><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;用户注册</h3>
+			</div>
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="register">
+					<form action="{% url 'register' %}" method="post">
+							<div class="form-group">
+							    <label for="email">请输入邮箱<em>(*必填)</em></label>
+
+
+							    <input type="email" class="form-control required"  id="email" name="email" placeholder="请输入正确邮箱">
+							    
+							</div>
+
+							<div class="form-group">
+							    <label for="password">请设置密码<em>(*必填)</em></label>
+							    <input type="password" class="form-control required"  id="password" name="password" placeholder="密码至少为六位">
+							    
+							</div>
+                        <div class="form-group">
+                                    <label>验&nbsp;证&nbsp;码</label>
+                            {{ register_form.captcha }}
+                            {% if register_form.errors.captcha %}<font color="red">      验证码错误</font>{% endif %}
+
+							</div>
+
+{#                     <div class="form-group">#}
+{#                        {% for key,error in register_form.errors.items %}{{ error }}{% endfor %}#}
+{#                        </div>#}
+{#                     <div class="form-group">#}
+{#                            {% if register_form.errors.captcha %} <label>验证码错误</label>{% endif %}#}
+{#                        </div>#}
+
+
+							<div class="form-group submit">
+								<input type="submit" id="send" value="点击注册" class="send"></input>
+							</div>
+                        {% csrf_token %}
+
+					</form>
+
+                    {% if msg %} <p>{{ msg }}</p>{% endif %}
+
+					<div class="login">
+						已有账号,<a href="{% url 'login' %}"><em>点击去登陆>></em></a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3"></div>
+
+		</div>
+	</div>
+<script src="/static/js/jquery-1.11.3.min.js"></script>
+<script src="/static/js/register.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+</body>
+</html>

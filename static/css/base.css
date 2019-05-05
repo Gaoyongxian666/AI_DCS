@@ -1,0 +1,28 @@
+body,*{
+	padding: 0;
+	margin:0;
+	font-size:16px;
+    font-family: '微软雅黑', 'Arial Unicode MS', Arial, Helvetica, sans-serif;
+    border:none;
+}
+img {
+	border: none;
+	padding:0px;
+	margin: 0px;
+}
+ul li {
+	list-style: none;
+}
+a:hover,
+a:focus {
+	text-decoration: none;
+}
+.person .Active{
+	background:#01A0EC;
+	color: #fff;
+}
+div.row{
+    margin-right: 0px;
+    margin-left: 0px;
+}
+

@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block title %}水墨画生成{% endblock %}
+
+
+
+{% block custom_js %}
+    <script type="text/javascript" src="/static/js/index.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+
+    <!-- 功能部分 -->
+    <div class="function2">
+    	<form class="form-horizontal" id="imgform" enctype="multipart/form-data">
+    	    <div class="container">
+    		    <div class="row">
+	    			<div class="col-md-3"></div>
+	    			<div class="col-md-6">
+					    <div class="form-group">
+						    <label for="workName" class="col-sm-2 control-label">
+						    	<p>作品名称</p>
+						    </label>
+						    <div class="col-sm-10">
+						      <input type="text" class="form-control" id="workName" name="name">
+						    </div>
+					    </div>
+					    <div class="form-group">
+						    <label for="logoName" class="col-sm-2 control-label">
+						    	<p>关键字</p>
+						    </label>
+						    <div class="col-sm-10">
+						      <input type="text" class="form-control" id="logoName" name="desc">
+						    </div>
+					    </div>
+					</div>
+    			    <div class="col-md-12">
+    			    	<div class="form-group">
+					        <div class="generateBefore" id="generateBefore">
+					            <img src="/static/img/footerAI.jpg" alt="用户上传的图片" class="img-responsive">
+					        </div>
+						    <label for="fileWorks">
+						    	<div class="submitWorks">上传图片</div>
+						    	<input type="file" id="fileWorks" name="file" >
+						    </label>
+					    </div>
+    			    </div>
+
+
+    			</div>
+    	    </div>
+		</form>
+        <div class="col-md-12">
+    			    	<div class="generateAfter" >
+    			    		<img src="/static/img/footerAI.jpg" id="generate_work" class="img-responsive" alt="生成的图片"  style="margin: 0 auto";>
+    			    	</div>
+    			    </div>
+        <button id="generate" class="submitWorks">自动生成</button>
+
+
+
+    </div>
+
+{% endblock %}
+{% block end_js %}
+    <script type="text/javascript" src="/static/js/ImageUpload.js"></script>
+
+    <script>
+      $(function(){
+            $('#generate').on('click', function(){
+                var formData = new FormData($('#imgform')[0]);
+
+                formData.append("sort","1");
+
+                $.ajax({
+                    cache: false,
+                    type: "post",
+                    url:"{% url 'works:generatechinese' %}",
+                    data:formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    },
+                    success: function(data) {
+                         if(data.status ==='success'){
+
+                             task_id=data.task_id;
+                             window.location.href={% url "process_html" %}+"?task_id="+task_id;
+
+                        }else if(data.status ==='fail'){
+                             var obj = eval(data);
+                            alert(obj['msg']);
+                            window.location.reload();
+
+                        }else {
+                            alert("服务器错误，请重试");
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+      })
+    </script>
+{% endblock %}
+{##}
+{#{% block end_js %}#}
+{#    <script type="text/javascript" src="/static/js/ImageUpload.js"></script>#}
+{##}
+{#    <script>#}
+{#      $(function(){#}
+{#            $('#generate').on('click', function(){#}
+{#                var formData = new FormData($('#imgform')[0]);#}
+{#                formData.append("file", $('#imgform')[0].files[0]);#}
+{##}
+{#                formData.append("sort","3");#}
+{##}
+{#                $.ajax({#}
+{#                    cache: false,#}
+{#                    type: "post",#}
+{#                    url:"{% url 'works:generatechinese' %}",#}
+{#                    data:formData,#}
+{#                    processData: false,#}
+{#                    contentType: false,#}
+{#                    beforeSend:function(xhr, settings){#}
+{#                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");#}
+{#                    },#}
+{#                    success: function(data) {#}
+{#                         if(data.status ==='success'){#}
+{##}
+{#                             $("#generate_work").attr("src",data.image_path);#}
+{#                        }else if(data.status ==='fail'){#}
+{#                             var obj = eval(data);#}
+{#                            alert(obj['msg']);#}
+{#                            window.location.reload();#}
+{##}
+{#                        }else {#}
+{#                            alert("服务器错误，请重试");#}
+{#                            window.location.reload();#}
+{#                        }#}
+{#                    }#}
+{#                });#}
+{#            });#}
+{#      })#}
+{#    </script>#}
+{#{% endblock %}#}
