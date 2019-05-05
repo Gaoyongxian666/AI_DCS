@@ -1,0 +1,55 @@
+.logo{
+	text-align: center;
+}
+.logo img{
+	vertical-align: middle;
+}
+.logo h3{
+	font-size: 18px;
+	color:#848484;
+}
+.logo{
+	margin-top:45px;
+	margin-bottom: 35px;
+}
+.register{
+	    box-shadow: 2px 0 46px rgba(0, 0, 0, 0.18);
+        border-radius: 5px;
+        padding: 36px 50px;
+}
+.register .form-group{
+    margin-bottom:25px;   
+}
+.register{
+	font-size: 15px;
+}
+.register .form-group em{
+	color:red;
+}
+.register .submit{
+   color: #fff; 
+}
+.register .submit:hover{
+	color:#848484;
+}
+.register .submit .send{
+    width:100%;
+    margin-top:20px;
+    background-color: #01A0EC;
+    height:50px;
+    border-radius: 5px; 
+    color：#fff;
+}
+.register .login{
+	margin-top:35px;
+	text-align: right;
+}
+.register .login a {
+	color: #01A0EC；
+}
+p.onError{
+	color:red;
+}
+p.onSuccess{
+	color:green;
+}

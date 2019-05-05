@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}更多作品{% endblock %}
+
+
+{% block custom_js %}
+    <script type="text/javascript" src="/static/js/index.js"></script>
+{% endblock %}
+
+{% block content %}
+   <section class="moreWorksIntroduce">
+        <div class="layer">
+           <div class="container">
+               <div class="row">
+                    <div class="col-xs-1"></div>
+                   <div class="col-xs-11 ">
+                       {{ jianjie}}
+                   </div>
+                   <!-- <div class="col"></div> -->
+                <div class="row">
+                    <div class="col-xs-10">
+                        <div class="search">
+                            <form action="{% url 'works:works_list' %}" method="get">
+                                <input type="text" name="keywords">
+                                <input type="submit" value="点击搜索">
+                            </form>
+                        </div>
+                   </div>
+                   <div class="col-xs-2"></div>
+                </div>
+
+
+               </div>
+           </div>
+
+        </div>
+
+    </section>
+
+
+
+
+
+    <div class="showbg">
+        <!-- LOGO作品展示 -->
+        <section class="moreWorksShow">
+
+
+
+            <div class="container">
+                <div class="row">
+{#                <div class="col-md-12 antistop">#}
+{#                        <strong>关键词:</strong>#}
+{#                        <span>logo生成</span>#}
+{#                        <span>线稿上色</span>#}
+{#                        <span>风格生成</span>#}
+{#                        <span>灰度图上色</span>#}
+{#                        <span>水墨画生成</span>#}
+{#                        <span>人物转动漫</span>#}
+{##}
+{#                    </div>#}
+
+                {% for work in all_works.object_list %}
+
+                    <div class="col-xs-6 col-md-3">
+                        <a href="{% url 'works:works_detail' work.id %}" class="thumbnail">
+                            <img src="{{ MEDIA_URL }}{{ work.image }}" alt="...">
+                            <h6>
+                                <span class="glyphicon glyphicon-thumbs-up"><em>{{ work.love_nums }}</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong><span class="glyphicon glyphicon-star"><em>{{ work.fav_nums }}</em></span></strong>
+                            </h6>
+                        </a>
+                    </div>
+
+                {% endfor %}
+
+                </div>
+
+
+
+            </div>
+        </section>
+
+        <!-- 翻页按钮 -->
+        <section class="moreWorksPage">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+
+
+                    {% if all_works.has_previous %}
+                        <li>
+                            <a href="?{{ all_works.previous_page_number }}&sort={{ sort }}" aria-label="Previous">
+                                <span aria-hidden="true">上一页</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+
+                    {% if page|add:-4 > 0  %}
+                        <li><a href="?page={{ page|add:-4 }}&sort={{ sort }}">{{ page|add:-4 }}</a></li>
+                    {% endif %}
+                    {% if page|add:-3 > 0  %}
+                        <li><a href="?page={{ page|add:-3 }}&sort={{ sort }}">{{ page|add:-3 }}</a></li>
+                    {% endif %}
+                    {% if page|add:-2 > 0  %}
+                        <li><a href="?page={{ page|add:-2 }}&sort={{ sort }}">{{ page|add:-2 }}</a></li>
+                    {% endif %}
+
+                    {% if page|add:-1 > 0  %}
+                        <li><a href="?page={{ page|add:-1 }}&sort={{ sort }}">{{ page|add:-1 }}</a></li>
+                    {% endif %}
+
+                    <li class="active"><a href="?page={{ page }}&sort={{ sort }}">{{ page }}</a></li>
+
+                    {% if page|add:1 <= p.num_pages   %}
+                        <li><a href="?page={{ page|add:1 }}&sort={{ sort }}">{{ page|add:1 }}</a></li>
+                    {% endif %}
+                    {% if page|add:2 <= p.num_pages  %}
+                        <li><a href="?page={{ page|add:2 }}&sort={{ sort }}">{{ page|add:2 }}</a></li>
+                    {% endif %}
+                    {% if page|add:3 <= p.num_pages   %}
+                        <li><a href="?page={{ page|add:3 }}&sort={{ sort }}">{{ page|add:3 }}</a></li>
+                    {% endif %}
+                    {% if page|add:4 <= p.num_pages   %}
+                        <li><a href="?page={{ page|add:4 }}&sort={{ sort }}">{{ page|add:4 }}</a></li>
+                    {% endif %}
+
+
+                    {% if all_works.has_next %}
+                        <li>
+                            <a href="?page={{ all_works.next_page_number }}&sort={{ sort }}" aria-label="Next">
+                                <span aria-hidden="true">下一页</span>
+
+                            </a>
+                        </li>
+                    {% endif %}
+
+
+
+                </ul>
+            </nav>
+        </section>
+    </div>
+
+{% endblock %}
+
+
+
+
+{% block end_js %}
+{#    <script type="text/javascript">#}
+{#        $(".col-xs-11").html(#}
+{#            {{ jianjie}}#}
+{#        );#}
+{#    </script>#}
+{% endblock %}
+
+
+
+

@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+{% block title %}AI-DCS首页{% endblock %}
+
+
+
+
+{% block custom_js %}
+{% endblock %}
+
+{% block content %}
+ <!-- 轮播图部分 -->
+    <section class="slideshow">
+    	<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+		    <!-- Indicators -->
+		    <ol class="carousel-indicators">
+		        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+		        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+		        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+		    </ol>
+
+		    <!-- Wrapper for slides -->
+		    <div class="carousel-inner" role="listbox">
+                {% for banner in first_banner %}
+		            <div class="item active">
+                                                <a href="{{ banner.url }}"><img src="{{ MEDIA_URL }}{{ banner.image }}" alt="...">
+</a>
+		                <div class="carousel-caption">
+
+
+		            </div>
+		        </div>
+                {% endfor %}
+
+
+
+                {% for banner in all_banner %}
+		            <div class="item">
+		                                       <a href="{{ banner.url }}"> <img src="{{ MEDIA_URL }}{{ banner.image }}" alt="...">
+</a>
+		                <div class="carousel-caption">
+
+
+		            </div>
+		        </div>
+                {% endfor %}
+
+		    </div>
+
+		    <!-- Controls -->
+		    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+		        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+		        <span class="sr-only">Previous</span>
+		    </a>
+		    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+		        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+		        <span class="sr-only">Next</span>
+		    </a>
+		</div>
+    </section>
+
+    <!-- 各个功能介绍 -->
+    <section class="functionIndex">
+    	<div class="container">
+    		<div class="row">
+                <div class="col-md-12 starTop">
+                    <h2> AI Dream-Color-Style </h2>
+                    <p>-让用户切身体验人工智能图像处理技术-</p>
+                </div>
+    			<div class="demo">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-2 col-sm-6">
+								<div class="box">
+									<div class="box-img img-responsive" >
+										<img src="../static/img/index-logo.jpg" alt=""  class="img-responsive">
+									</div>
+									<div class="box-content">
+										<h4 class="title">logo生成</h4>
+										<p class="description">加入元素，获得logo</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-2 col-sm-6">
+								<div class="box">
+									<div class="box-img">
+										<img src="../static/img/index-line.jpg" alt=""  class="img-responsive">
+									</div>
+									<div class="box-content">
+										<h4 class="title">线稿上色</h4>
+										<p class="description">一张线稿多种上色样式</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-2 col-sm-6">
+								<div class="box">
+									<div class="box-img">
+										<img src="../static/img/index-style.jpg" alt=""  class="img-responsive">
+									</div>
+									<div class="box-content">
+										<h4 class="title">风格化</h4>
+										<p class="description">一张图片千般风情</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-2 col-sm-6">
+								<div class="box">
+									<div class="box-img">
+										<img src="../static/img/index-gray.jpg" alt=""  class="img-responsive">
+									</div>
+									<div class="box-content">
+										<h4 class="title">灰度图上色</h4>
+										<p class="description">灰色的世界我带来色彩</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-2 col-sm-6">
+								<div class="box">
+									<div class="box-img">
+										<img src="../static/img/index-chinese.jpg" alt=""  class="img-responsive">
+									</div>
+									<div class="box-content">
+										<h4 class="title">中国风-水墨画</h4>
+										<p class="description">照片变水墨画</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-2 col-sm-6">
+								<div class="box">
+									<div class="box-img">
+										<img src="../static/img/index-figure.jpg" alt=""  class="img-responsive">
+									</div>
+									<div class="box-content">
+										<h4 class="title">人物转漫画</h4>
+										<p class="description">照片秒变二次元</p>
+									</div>
+								</div>
+							</div>
+
+
+						</div>
+
+
+	                </div>
+                </div>
+    		</div>
+    	</div>
+    </section>
+
+    <!-- 各个图片展示区域 -->
+    <section class="show">
+    	<div class="container">
+
+
+
+    		<!-- 线稿上色区展示 -->
+    		<div class="row wow slideInUp" ata-wow-duration="2s" animation-delay="1s">
+    			<div class="col-md-12" >
+    				<span class="glyphicon glyphicon-eye-open showTit"> 线稿上色</span>
+    			</div>
+    			<div class="row">
+                    <div class="col-xs-12 more">
+                        <a href="{% url 'works:works_list' %}?sort=1" target="blank">更多>></a>
+                    </div>
+                     {% for work in lineart %}
+
+                        <div class="col-xs-6 col-md-3">
+
+                            <a href="{% url 'works:works_detail' work.id %}" class="thumbnail">
+                                <img src="{{ MEDIA_URL }}{{ work.image }}" alt="LOGO">
+                                <h6>
+                                    <span class="glyphicon glyphicon-thumbs-up"><em>{{ work.love_nums }}</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><span class="glyphicon glyphicon-star"><em>{{ work.fav_nums }}</em></span></strong>
+                                </h6>
+                            </a>
+
+                        </div>
+                    {% endfor %}
+                </div>
+    		</div>
+
+    		<!-- 风格生成区展示 -->
+    		<div class="row wow slideInUp" data-wow-duration="2s" animation-delay="0.2s">
+    			<div class="col-md-12">
+    				<span class="glyphicon glyphicon-asterisk showTit"> 风格生成</span>
+    			</div>
+    			<div class="row">
+                    <div class="col-xs-12 more">
+                        <a href="{% url 'works:works_list' %}?sort=2"  target="blank">更多>></a>
+                    </div>
+
+                    {% for work in style %}
+
+                        <div class="col-xs-6 col-md-3">
+
+                            <a href="{% url 'works:works_detail' work.id %}" class="thumbnail">
+                                <img src="{{ MEDIA_URL }}{{ work.image }}" alt="LOGO">
+                                <h6>
+                                    <span class="glyphicon glyphicon-thumbs-up"><em>{{ work.love_nums }}</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><span class="glyphicon glyphicon-star"><em>{{ work.fav_nums }}</em></span></strong>
+                                </h6>
+                            </a>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+    		</div>
+
+    		<!-- 线稿生成区展示 -->
+    		<div class="row wow slideInUp" data-wow-duration="2s" animation-delay="0.2s">
+    			<div class="col-md-12">
+    				<span class="glyphicon glyphicon-eye-close showTit"> 生成线稿</span>
+    			</div>
+    			<div class="row">
+                    <div class="col-xs-12 more">
+                        <a href="{% url 'works:works_list' %}?sort=6"  target="blank">更多>></a>
+                    </div>
+                     {% for work in linege %}
+
+                        <div class="col-xs-6 col-md-3">
+
+                            <a href="{% url 'works:works_detail' work.id %}" class="thumbnail">
+                                <img src="{{ MEDIA_URL }}{{ work.image }}" alt="LOGO">
+                                <h6>
+                                    <span class="glyphicon glyphicon-thumbs-up"><em>{{ work.love_nums }}</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><span class="glyphicon glyphicon-star"><em>{{ work.fav_nums }}</em></span></strong>
+                                </h6>
+                            </a>
+
+                        </div>
+                    {% endfor %}
+                </div>
+    		</div>
+
+    		<!-- 水墨画生成区展示 -->
+    		<div class="row wow slideInUp" data-wow-duration="2s" animation-delay="0.2s">
+    			<div class="col-md-12">
+    				<span class="glyphicon glyphicon-cloud showTit"> 水墨画生成</span>
+    			</div>
+
+    			<div class="row">
+                    <div class="col-xs-12 more">
+                        <a href="{% url 'works:works_list' %}?sort=4" target="blank">更多>></a>
+                    </div>
+                    {% for work in chinese %}
+
+                        <div class="col-xs-6 col-md-3">
+
+                            <a href="{% url 'works:works_detail' work.id %}" class="thumbnail">
+                                <img src="{{ MEDIA_URL }}{{ work.image }}" alt="LOGO">
+                                <h6>
+                                    <span class="glyphicon glyphicon-thumbs-up"><em>{{ work.love_nums }}</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><span class="glyphicon glyphicon-star"><em>{{ work.fav_nums }}</em></span></strong>
+                                </h6>
+                            </a>
+
+                        </div>
+                    {% endfor %}
+                </div>
+    		</div>
+
+    		<!-- 人物转动漫区展示 -->
+    		<div class="row wow slideInUp" data-wow-duration="2s" animation-delay="0.2s">
+    			<div class="col-md-12">
+    				<span class="glyphicon glyphicon-transfer showTit"> 人物转动漫</span>
+    			</div>
+    			<div class="row">
+                    <div class="col-xs-12 more">
+                        <a href="{% url 'works:works_list' %}?sort=5" target="blank">更多>></a>
+                    </div>
+               {% for work in figure %}
+
+                        <div class="col-xs-6 col-md-3">
+
+                            <a href="{% url 'works:works_detail' work.id %}" class="thumbnail">
+                                <img src="{{ MEDIA_URL }}{{ work.image }}" alt="LOGO">
+                                <h6>
+                                    <span class="glyphicon glyphicon-thumbs-up"><em>{{ work.love_nums }}</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><span class="glyphicon glyphicon-star"><em>{{ work.fav_nums }}</em></span></strong>
+                                </h6>
+                            </a>
+
+                        </div>
+                    {% endfor %}
+                </div>
+    		</div>
+    	</div>
+    </section>
+
+{% endblock %}
+
+{% block indexcontent %}
+    		<div class="cover">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="introduce">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                                <h2>我们生成的图像多么多么精彩<br><br><br></h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="introduce">
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                                <h2>我们的人工智能技术多么多么厉害<br><br><br></h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="introduce">
+                                <span class="glyphicon glyphicon-send"></span>
+                                <h2>我们的团队多么多么厉害还阔以联系我们<br><br><br></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block end_js %}
+    <script>
+    new WOW().init();
+</script>
+{% endblock %}
