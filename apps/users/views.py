@@ -443,18 +443,21 @@ def __authorize_by_code(request):
         with open(Root_DIR + '/media/image/%s.png' % openid, 'wb') as f:
             f.write(r.content)
         image = 'image/%s.png' % openid
-        new_user = UserProfile(open_id=openid, nickname=nickname,image=image,gender=gender,address=country+"\t"+province+"\t"+city)
+        new_user = UserProfile(open_id=openid, nickname=nickname,image=image,gender=gender,address=country+"\t"+province+"\t"+city,username=openid)
         print('new user: open_id: %s, nickname: %s' % (openid, nickname) )
         new_user.save()
-    # TypeError: Object of type 'ImageFieldFile' is not JSON serializable
-    # response={"nick_name":user[0].nickname,"image":user[0].image.path,"code":ReturnCode.SUCCESS}
-    # path 是打印完整目录， str打印内容
-    response={"nick_name":user[0].nickname,"image":str(user[0].image),"code":ReturnCode.SUCCESS}
+        response = {"nick_name": new_user.nickname, "image": str(new_user.image), "code": ReturnCode.SUCCESS}
+        print(response)
+        return JsonResponse(data=response, safe=False)
+    else:
+        # TypeError: Object of type 'ImageFieldFile' is not JSON serializable
+        # response={"nick_name":user[0].nickname,"image":user[0].image.path,"code":ReturnCode.SUCCESS}
+        # path 是打印完整目录， str打印内容
+        response={"nick_name":user[0].nickname,"image":str(user[0].image),"code":ReturnCode.SUCCESS}
 
-    # response = wrap_json_response(code=ReturnCode.SUCCESS, message='{ "nick_name" success.')
-    print(response)
-    return JsonResponse(data=response, safe=False)
-    pass
+        # response = wrap_json_response(code=ReturnCode.SUCCESS, message='{ "nick_name" success.')
+        print(response)
+        return JsonResponse(data=response, safe=False)
 
 # 只有认证了，才可以获取open_id ,才可以知道是不是一个新用户，或者老用户
 # 如果需要登陆，判断already ，如果没有就返回没等人，让其登入，如果登入就可以直接从session中获取open_id 然后

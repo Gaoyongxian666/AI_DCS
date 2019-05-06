@@ -138,7 +138,7 @@ SECRET_KEY = 'qp5wa05m41^eb*f%)i7m1_bh+^%5)$hdd^2lzp(rkg$k)nr0iz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.105','0.0.0.0','127.0.0.1','121.193.204.81','106.13.37.131','www.aidcs.cn','aidcs.cn']
+ALLOWED_HOSTS = ['192.168.1.105','0.0.0.0','127.0.0.1','121.193.204.81','106.13.37.131','www.aidcs.cn','aidcs.cn','192.168.1.112']
 
 
 # Application definition
@@ -300,6 +300,7 @@ Active_IP='http://127.0.0.1:8000'
 # 2.将dafult.png 文件放到media 文件夹下的image 文件夹下
 
 
-WX_APP_SECRET="6436914e5d61afdfec8d8d1cf953ef12"
+# WX_APP_SECRET="6436914e5d61afdfec8d8d1cf953ef12"
+WX_APP_SECRET="a1809483e3265c1d026f4b7c760dc202"
 
 USE_PROXY={}

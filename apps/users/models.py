@@ -1,5 +1,6 @@
 # from datetime import datetime
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.utils import timezone as datetime
 # Create your models here.
@@ -18,6 +19,9 @@ from django.utils import timezone as datetime
 #         db_table = 'tb_users'
 #         verbose_name = '用户'
 #         verbose_name_plural = verbose_name
+from django.utils.functional import lazy
+from django.utils.translation import gettext
+
 
 class UserProfile(AbstractUser):
     # 自定义的性别选择规则
@@ -51,6 +55,7 @@ class UserProfile(AbstractUser):
         max_length=500,
         verbose_name="头像"
     )
+
     signature=models.CharField(max_length=100, verbose_name=u"个性签名", default="")
     open_id=models.CharField(max_length=100, verbose_name=u"OPENID", default="")
     nickname = models.CharField(max_length=50, verbose_name=u"微信昵称", default="")
