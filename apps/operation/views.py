@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.shortcuts import render
 
 # Create your views here.
@@ -19,8 +18,4 @@ def process_html(request):
 
 def show_progress(request):
     return JsonResponse(num_progress, safe=False)
-=======
-from django.shortcuts import render
 
-# Create your views here.
->>>>>>> github/master
