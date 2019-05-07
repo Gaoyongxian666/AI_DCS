@@ -34,6 +34,7 @@ class WorksListView(View):
         sort = request.GET.get('sort', 1)
         print(sort)
 
+
         try:
             sort = request.GET['sort']
         except MultiValueDictKeyError:
@@ -125,6 +126,7 @@ class WorksListView(View):
 
 
 
+
         for all_work in all_works:
             image_path = all_work.image.path
             img_md5=get_md5_01(image_path)
@@ -148,6 +150,7 @@ class WorksListView(View):
         if works.has_next():
             print("True")
         print(work_list_)
+
         # 下面这些都是针对p 就是分类器对象而言的
         # 把对象p传到前端也是可以使用的
         ## 要分页的总对象数paginator.count 7
@@ -171,6 +174,7 @@ class WorksListView(View):
             "p": p,
             "jianjie":mark_safe(intro)
         })
+
 
 # 作品详情
 # 作品id
@@ -211,6 +215,7 @@ class WorksDetailView(View):
                 user_name="请登陆"
         except AttributeError:
             user_image = "image/default.png"
+
             user_name = "请登陆"
 
         has_fav_work = False
@@ -428,6 +433,7 @@ class AddLoveView(View):
             else:
                 return HttpResponse('{"status":"fail", "msg":"点赞出错"}', content_type='application/json')
 
+
 # 下载
 class DownloadView(View):
     def get(self, request, work_id):
@@ -494,6 +500,7 @@ class GenerateGrayView(LoginRequiredMixin, View):
 
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
 
+
         # 保存生成的作品
         work.tag = tag
         work.name = name
@@ -505,6 +512,7 @@ class GenerateGrayView(LoginRequiredMixin, View):
         # 线稿生成 sketch
         print('''Main.choose(model_name="Colornet",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
 ''')
+
 
 
 
@@ -552,6 +560,7 @@ class GenerateLineArtView(LoginRequiredMixin, View):
         # Main.choose(model_name="Painter",content=material_path,output=work.image.path)
         print('''Main.choose(model_name="Painter",content=material_path,output=work.image.path)''')
 
+
         userworks.works = work
         userworks.save()
 
@@ -598,6 +607,7 @@ class GenerateFigureView(LoginRequiredMixin, View):
         print('''Main.choose(model_name="Figure",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
 
 
+
         userworks.works = work
         userworks.save()
 
@@ -631,6 +641,7 @@ class GenerateChineseView(LoginRequiredMixin, View):
 
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
 
+
         # 保存生成的作品
         work.tag = tag
         work.name = name
@@ -643,11 +654,13 @@ class GenerateChineseView(LoginRequiredMixin, View):
 
         print('''Main.choose(model_name="Chinese",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
 
+
         userworks.works = work
         userworks.save()
 
         # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
         data = {"status": "success", "task_id": str("sssss")}
+
         return HttpResponse(json.dumps(data), content_type="application/json")
     def get(self, request):
         return render(request, template_name="functionChinese.html")
@@ -696,6 +709,7 @@ class GenerateLineView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, template_name="functionLine.html")
 
+
 class GenerateStyleView(LoginRequiredMixin, View):
     def post(self, request):
         work = Works()
@@ -724,6 +738,7 @@ class GenerateStyleView(LoginRequiredMixin, View):
 
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
 
+
         # 保存生成的作品
         work.tag = tag
         work.name = name
@@ -749,6 +764,7 @@ class GenerateStyleView(LoginRequiredMixin, View):
 
 
         print('''Main.choose(model_name="StyleTransfer",content=material_path,output=work.image.path,style_model = style_model)''')
+
 
 
 
@@ -785,6 +801,7 @@ class GenerateLogoView(LoginRequiredMixin, View):
 
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
 
+
         # 保存生成的作品
         work.tag = tag
         work.name = name
@@ -795,6 +812,7 @@ class GenerateLogoView(LoginRequiredMixin, View):
         # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
         # 线稿生成 sketch
         print('''Main.choose(model_name="Colornet",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
+
 
         userworks.works = work
         userworks.save()
@@ -1117,4 +1135,5 @@ class WXDownloadView(View):
         download_num=work.download_nums+1
         data = {"status": "success", "msg":"下载","download_num": download_num}
         return HttpResponse(json.dumps(data), content_type="application/json")
+
 

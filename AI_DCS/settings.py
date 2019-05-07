@@ -117,13 +117,13 @@ BASE_LOG_DIR = os.path.join(BASE_DIR, "log")
 # }
 
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import sys
 
 
 # 使各个模块，可以导入
 # 注意init文件
+
 sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
 sys.path.insert(0,os.path.join(BASE_DIR, 'extra_apps'))
 sys.path.insert(0,os.path.join(BASE_DIR, 'extra_apps/AIDCS'))
@@ -139,6 +139,7 @@ SECRET_KEY = 'qp5wa05m41^eb*f%)i7m1_bh+^%5)$hdd^2lzp(rkg$k)nr0iz'
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.105','0.0.0.0','127.0.0.1','121.193.204.81','106.13.37.131','www.aidcs.cn','aidcs.cn','192.168.1.112']
+
 
 
 # Application definition
@@ -202,6 +203,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
 WSGI_APPLICATION = 'AI_DCS.wsgi.application'
 
 
@@ -213,11 +215,13 @@ DATABASES = {
         {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'aidcs02',
+
             'USER': 'root',
             'PASSWORD': '8831366.',
             'HOST': "127.0.0.1"
         }
 }
+
 
 # 'USER': 'debian-sys-maint',
 # 'PASSWORD': 'zr8Va1UeDZy8JgcH',
@@ -273,6 +277,7 @@ STATIC_ROOT = '/home/ai/AI_DCS/static/'
 
 # 其它 存放静态文件的文件夹，可以用来存放项目中公用的静态文件，里面不能包含 STATIC_ROOT
 # 如果不想用 STATICFILES_DIRS 可以不用，都放在 app 里的 static 中也可以
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]

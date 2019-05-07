@@ -21,6 +21,7 @@ from utils.mixin_utils import LoginRequiredMixin
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 Root_DIR=os.path.dirname(os.path.dirname(BASE_DIR))
 
+
 # 可以让用户名和邮箱同时登陆
 class CustomBackend(ModelBackend):
     def authenticate(self, username=None, password=None, **kwargs):
@@ -370,6 +371,7 @@ class IndexView(View):
         })
 
 
+
 def page_not_found(request):
     #全局404处理函数
     from django.shortcuts import render_to_response
@@ -652,7 +654,6 @@ class WXMyWorksView(CommonResponseMixin, View):
         response = {"work_list": work_list_, "have_next": have_next, "code": ReturnCode.SUCCESS}
         print(response)
         return JsonResponse(data=response, safe=False)
-
 
 
 
