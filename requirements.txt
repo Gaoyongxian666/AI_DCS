@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 absl-py ==0.5.0
-=======
-啊幅度萨芬萨absl-py==0.5.0
->>>>>>> f41bd718870d412862a426c84bc8658fa0fe552d
 aioredis==1.2.0
 amqp==2.3.2
 asgi-redis==1.4.3
@@ -60,10 +56,7 @@ msgpack==0.5.6
 msgpack-python==0.5.6
 mysqlclient==1.3.10
 Naked==0.1.31
-numpy==1.15.2
-#
 odfpy==1.3.6
-opencv-python==3.4.3.18
 openpyxl==2.5.7
 p==0.0.0
 Pillow==5.2.0
@@ -83,8 +76,6 @@ shellescape==3.4.1
 six==1.11.0
 slim==0.1
 tablib==0.12.1
-tensorboard==1.11.0
-tensorflow==1.2.0
 termcolor==1.1.0
 Twisted==18.9.0
 txaio==18.8.1
