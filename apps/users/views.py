@@ -10,7 +10,6 @@ from django.urls import reverse
 from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-
 from operation.models import UserFavorite, UserLove, UserWorks, UserMessage
 from works.models import Works
 from .models import UserProfile, EmailVerifyRecord, Banner
@@ -106,7 +105,7 @@ class LoginView(View):
             else:
                 return render(request, "login.html", {"msg":"用户未激活或密码错误！"})
         else:
-            return render(request, "login.html", {"login_form":login_form })
+            return render(request, "login.html", {"login_form":login_form ,"message":"用户名密码格式错误"})
 
 class SendEmailCodeView(LoginRequiredMixin, View):
     def get(self, request):

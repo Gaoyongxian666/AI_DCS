@@ -17,7 +17,7 @@ from utils.mixin_utils import LoginRequiredMixin
 from utils.response import CommonResponseMixin, ReturnCode
 from works.models import Works
 from utils.md5_utils import *
-
+from AIDCS.tasks import add,do_chinese,do_figure,do_painter,do_sketch,do_style
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -33,8 +33,6 @@ class WorksListView(View):
         all_works = Works.objects.all().order_by("-add_time")
         sort = request.GET.get('sort', 1)
         print(sort)
-
-
         try:
             sort = request.GET['sort']
         except MultiValueDictKeyError:
@@ -474,7 +472,6 @@ class DownloadView(View):
         return HttpResponse(json.dumps(data), content_type="application/json")
 
 
-
 class GenerateGrayView(LoginRequiredMixin, View):
     def post(self, request):
         work = Works()
@@ -510,8 +507,7 @@ class GenerateGrayView(LoginRequiredMixin, View):
 
         # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
         # 线稿生成 sketch
-        print('''Main.choose(model_name="Colornet",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')
-''')
+        print('''Main.choose(model_name="Colornet",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
 
 
 
@@ -528,7 +524,6 @@ class GenerateLineArtView(LoginRequiredMixin, View):
     def post(self, request):
         work = Works()
         userworks = UserWorks()
-
         name = request.POST.get('name', "未命名作品")
         if name== '':
             name="未命名作品"
@@ -538,9 +533,6 @@ class GenerateLineArtView(LoginRequiredMixin, View):
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
 
         tag="线稿上色"
-
-
-
         userworks.user = request.user
         userworks.material = userImage
         userworks.save()
@@ -557,14 +549,18 @@ class GenerateLineArtView(LoginRequiredMixin, View):
         work.image.save("work.jpg", userGenerateGray)
         work.save()
 
+        task_id=str(do_painter.delay(content=material_path,output=work.image.path))
+
         # Main.choose(model_name="Painter",content=material_path,output=work.image.path)
         print('''Main.choose(model_name="Painter",content=material_path,output=work.image.path)''')
 
 
         userworks.works = work
         userworks.save()
+        data={"status":"success","task_id": task_id}
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+
+        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
         return HttpResponse(json.dumps(data), content_type="application/json")
 
     def get(self, request):
@@ -606,12 +602,15 @@ class GenerateFigureView(LoginRequiredMixin, View):
         # 线稿生成 sketch
         print('''Main.choose(model_name="Figure",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
 
+        task_id=str(do_figure.delay(content=material_path,output=work.image.path))
 
 
         userworks.works = work
         userworks.save()
+        data={"status":"success","task_id": task_id}
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+
+        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
         return HttpResponse(json.dumps(data), content_type="application/json")
     def get(self, request):
         return render(request, template_name="functionComic.html")
@@ -653,13 +652,16 @@ class GenerateChineseView(LoginRequiredMixin, View):
         # 线稿生成 sketch
 
         print('''Main.choose(model_name="Chinese",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
+        task_id=str(do_chinese.delay(content=material_path,output=work.image.path))
 
 
         userworks.works = work
         userworks.save()
 
         # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
-        data = {"status": "success", "task_id": str("sssss")}
+        # data = {"status": "success", "task_id": str("sssss")}
+        data={"status":"success","task_id": task_id}
+        print(data)
 
         return HttpResponse(json.dumps(data), content_type="application/json")
     def get(self, request):
@@ -697,13 +699,16 @@ class GenerateLineView(LoginRequiredMixin, View):
         work.desc = desc
         work.image.save("work.jpg", userGenerateGray)
         work.save()
+        task_id=str(do_sketch.delay(content=material_path,output=work.image.path))
 
         print('''Main.choose(model_name="Sketch",content=material_path,output=work.image.path)''')
 
         userworks.works = work
         userworks.save()
+        data={"status":"success","task_id": task_id}
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+
+        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
         return HttpResponse(json.dumps(data), content_type="application/json")
 
     def get(self, request):
@@ -762,6 +767,7 @@ class GenerateStyleView(LoginRequiredMixin, View):
         if style=="5":
             style_model="/home/ai/AI_DCS/AIDCS/StyleTransfer/models/udnie.ckpt"
 
+        task_id=str(do_style.delay(style_model = style_model,content=material_path,output=work.image.path))
 
         print('''Main.choose(model_name="StyleTransfer",content=material_path,output=work.image.path,style_model = style_model)''')
 
@@ -770,8 +776,10 @@ class GenerateStyleView(LoginRequiredMixin, View):
 
         userworks.works = work
         userworks.save()
+        data={"status":"success","task_id": task_id}
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+
+        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
         return HttpResponse(json.dumps(data), content_type="application/json")
     def get(self, request):
         return render(request, template_name="functionStyle.html")
@@ -813,11 +821,13 @@ class GenerateLogoView(LoginRequiredMixin, View):
         # 线稿生成 sketch
         print('''Main.choose(model_name="Colornet",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
 
-
+        task_id=""
         userworks.works = work
         userworks.save()
+        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
 
-        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
+
+        data={"status":"success","task_id": task_id}
         return HttpResponse(json.dumps(data), content_type="application/json")
     def get(self, request):
         return render(request, template_name="functionLogo.html")
