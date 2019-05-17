@@ -118,8 +118,8 @@ class WorksListView(View):
         Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
         default_img_path = Base_dir + "/static/img/1.jpg"
-        # md5="ec1d1b1554a049dad66ea68a306bfe1e"
-        md5="ec1d1b1554a049dad66ea68a306bf1e"
+        md5="ec1d1b1554a049dad66ea68a306bfe1e"
+        # md5="ec1d1b1554a049dad66ea68a306bf1e"
 
 
 

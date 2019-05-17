@@ -106,3 +106,11 @@ venv.bak/
 AIDCS
 media
 log
+apps/chat/migrations
+apps/operation/migrations
+apps/works/migrations
+apps/users/migrations
+!apps/chat/migrations/__init__.py
+!apps/operation/migrations/__init__.py
+!apps/works/migrations/__init__.py
+!apps/users/migrations/__init__.py
