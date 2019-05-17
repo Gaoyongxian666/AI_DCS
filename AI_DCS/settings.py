@@ -215,7 +215,7 @@ DATABASES = {
     'default':
         {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'aidcs02',
+            'NAME': 'aidcs03',
 
             'USER': 'root',
             'PASSWORD': '8831366.',
