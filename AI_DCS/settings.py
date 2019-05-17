@@ -215,7 +215,7 @@ DATABASES = {
     'default':
         {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'aidcs02',
+            'NAME': 'aidcs03',
 
             'USER': 'root',
             'PASSWORD': '8831366.',
@@ -297,8 +297,8 @@ EMAIL_FROM = "no-reply@aidcs.cn"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Active_IP='http://106.13.37.131'
-Active_IP='http://127.0.0.1:8000'
+Active_IP='http://106.13.37.131'
+#Active_IP='http://127.0.0.1:8000'
 
 #'http://www.aidcs.cn'
 

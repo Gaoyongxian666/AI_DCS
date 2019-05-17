@@ -110,6 +110,7 @@ apps/chat/migrations
 apps/operation/migrations
 apps/works/migrations
 apps/users/migrations
+.idea
 !apps/chat/migrations/__init__.py
 !apps/operation/migrations/__init__.py
 !apps/works/migrations/__init__.py
