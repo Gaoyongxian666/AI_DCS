@@ -630,6 +630,7 @@ class WXMyWorksView(CommonResponseMixin, View):
             response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
             return JsonResponse(response, safe=False)
         open_id = request.session.get('open_id')
+        print(open_id)
         user = UserProfile.objects.get(open_id=open_id)
         userworks_list = UserWorks.objects.filter(user=user).order_by("-add_time")
         works_list=[]
@@ -637,7 +638,7 @@ class WXMyWorksView(CommonResponseMixin, View):
             if userworks.works is not None:
                 works_list.append(userworks.works)
             else:
-                print(userworks.id+'userworks.works is None')
+                print(str(userworks.id)+'userworks.works is None')
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
@@ -648,7 +649,7 @@ class WXMyWorksView(CommonResponseMixin, View):
         work_list_ = []
         have_next = False
         for work in works:
-            work_list_.append((work.id, str(work.image)))
+            work_list_.append({"id":work.id,"image_url": str(work.image)})
         if works.has_next():
             have_next = True
         response = {"work_list": work_list_, "have_next": have_next, "code": ReturnCode.SUCCESS}
