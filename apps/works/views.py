@@ -995,7 +995,7 @@ class WXWorksListView(View):
         work_list_ = []
         have_next = False
         for work in works:
-            work_list_.append((work.id, str(work.image)))
+            work_list_.append({"id":work.id, "image_url":str(work.image)})
         if works.has_next():
             have_next = True
         response = {"work_list": work_list_, "have_next": have_next, "code": ReturnCode.SUCCESS,"intro":intro}
@@ -1013,12 +1013,16 @@ class WXWorksDetailView(View,CommonResponseMixin):
         open_id = request.session.get('open_id')
         user = UserProfile.objects.get(open_id=open_id)
         work = Works.objects.get(id=int(work_id))
-        userworks = UserWorks.objects.filter(works=work)
+        userworks = UserWorks.objects.get(works=work)
+        if userworks:
+            muser = userworks.user
+            username = muser.username
+
         has_fav_work = False
         has_love_work = False
-        if UserFavorite.objects.filter(user=request.user, fav_id=work.id, fav_type=1):
+        if UserFavorite.objects.filter(user=user, fav_id=work.id, fav_type=1):
             has_fav_work = True
-        if UserLove.objects.filter(user=request.user, love_id=work.id, love_type=1):
+        if UserLove.objects.filter(user=user, love_id=work.id, love_type=1):
             has_love_work = True
 
         # all_comments = WorksComments.objects.filter(works=work).order_by("-id")
@@ -1037,7 +1041,7 @@ class WXWorksDetailView(View,CommonResponseMixin):
         #     have_next = True
         response = {"work_name": work.name, "work_material": str(userworks.material),"work_image": str(work.image), "has_fav_work": has_fav_work,"has_love_work": has_love_work,
                     "work_download_nums": work.download_nums,"work_fav_nums": work.fav_nums,"work_love_nums": work.love_nums,"work_tag": work.tag,
-                    "username": user.nickname,"work_add_time": work.add_time,"code": ReturnCode.SUCCESS}
+                    "username": username,"work_add_time": work.add_time,"code": ReturnCode.SUCCESS}
         print(response)
         return JsonResponse(data=response, safe=False)
 

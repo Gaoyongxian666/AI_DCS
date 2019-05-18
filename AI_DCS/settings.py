@@ -139,7 +139,7 @@ SECRET_KEY = 'qp5wa05m41^eb*f%)i7m1_bh+^%5)$hdd^2lzp(rkg$k)nr0iz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.105','0.0.0.0','127.0.0.1','192.168.1.102','121.193.204.81','106.13.37.131','www.aidcs.cn','aidcs.cn','192.168.1.112','192.168.1.111','*.*.*.*']
+ALLOWED_HOSTS = ['192.168.1.105','192.168.1.108','0.0.0.0','127.0.0.1','192.168.1.102','121.193.204.81','106.13.37.131','www.aidcs.cn','aidcs.cn','192.168.1.112','192.168.1.111','*.*.*.*']
 
 
 
@@ -169,7 +169,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -215,7 +215,7 @@ DATABASES = {
     'default':
         {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'aidcs03',
+            'NAME': 'aidcs02',
 
             'USER': 'root',
             'PASSWORD': '8831366.',

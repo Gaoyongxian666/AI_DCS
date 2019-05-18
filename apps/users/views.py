@@ -438,6 +438,7 @@ def __authorize_by_code(request):
     request.session['open_id'] = openid
     request.session['is_authorized'] = True
     user=UserProfile.objects.filter(open_id=openid)
+    print(request.session)
 
     if not user:
         r = requests.get(image)

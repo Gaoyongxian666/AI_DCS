@@ -17,6 +17,7 @@ from utils.wx.code2session import code2session
 # 只有授权了才可以获取openid
 # 只有授权了，才可以在seesion中直接获取open_id,前端直接获取
 def already_authorized(request):
+    print(request.session)
     is_authorized = False
     if request.session.get('is_authorized'):
         is_authorized = True
