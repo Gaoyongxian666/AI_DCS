@@ -117,12 +117,13 @@
                         if(data.status ==='success'){
                              $('.functionLayer').css('display','block');
                             var roomName = data.task_id;
+                            var path=data.content;
                             var flag=0;
                             var task_stt=0;
                             var chatSocket = new WebSocket(
                                     'ws://' + window.location.host +
                                     '/ws/chat/' + roomName + '/');
-                                chatSocket.onmessage = function(e) {
+                                    chatSocket.onmessage = function(e) {
                                         var data = JSON.parse(e.data);
                                         var task_status = data['task_status'];
                                         var sum = data['sum'];
@@ -130,10 +131,14 @@
                                         var message = data['message'];
                                         $(".position").text(position);
                                         $(".sum").text(sum);
-                                        if(task_status){
+                                        if(message==="already"){
+                                            window.location.href="{% url 'users:my_works' %}";
+
+                                        }
+                                        else if(task_status){
                                             task_stt=1;
                                         }
-                                        else if (position=="1"){
+                                        else if (position==1){
                                             if (flag==0) {
                                                 flag=1;
                                                 var num=0;

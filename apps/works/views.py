@@ -1,4 +1,6 @@
 import json
+import os
+
 from django.core.files.base import ContentFile
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.db.models import Q
@@ -17,7 +19,6 @@ from utils.mixin_utils import LoginRequiredMixin
 from utils.response import CommonResponseMixin, ReturnCode
 from works.models import Works
 from utils.md5_utils import *
-from AIDCS.tasks import add,do_chinese,do_figure,do_painter,do_sketch,do_style
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -472,6 +473,280 @@ class DownloadView(View):
         return HttpResponse(json.dumps(data), content_type="application/json")
 
 
+from Task_queue.redis_queue import RedisQueue
+
+q = RedisQueue('aidcs', host='localhost', port=6379, db=1)  # 新建队列名为rq
+
+
+def do_painter(content, output, style=0,task_id=""):
+    q.put(json.dumps({"task": "do_painter", "content": content,
+                      "output": output, "style": style ,"task_id":task_id}))
+
+
+def do_style(content, output, style=0,task_id=""):
+    q.put(json.dumps({"task": "do_style", "content": content,
+                      "output": output, "style": style,"task_id":task_id}))
+
+
+def do_chinese(content, output, style=0,task_id=""):
+    q.put(json.dumps({"task": "do_chinese", "content": content,
+                      "output": output, "style": style,"task_id":task_id}))
+
+
+def do_figure(content, output, style=0,task_id=""):
+    q.put(json.dumps({"task": "do_figure", "content": content,
+                      "output": output, "style": style,"task_id":task_id}))
+
+
+def do_sketch(content, output, style=0,task_id=""):
+    q.put(json.dumps({"task": "do_sketch", "content": content,
+                      "output": output, "style": style,"task_id":task_id}))
+
+
+
+class GenerateLineArtView(LoginRequiredMixin, View):
+    def post(self, request):
+        work = Works()
+        userworks = UserWorks()
+        name = request.POST.get('name', "未命名作品")
+        if name== '':
+            name="未命名作品"
+        desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        if desc=='':
+            desc="这篇作品还没有作品描述"
+        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
+
+        tag="线稿上色"
+        userworks.user = request.user
+        userworks.material = userImage
+        userworks.save()
+
+
+        material_path=userworks.material.path
+
+        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
+
+        # 保存生成的作品
+        work.tag = tag
+        work.name = name
+        work.desc = desc
+        work.image.save("work.jpg", userGenerateGray)
+        work.save()
+
+        img_md5 = get_md5_01(material_path)
+        # task_id=str(do_painter.delay(content=material_path,output=work.image.path))
+        do_painter(content=material_path,output=work.image.path,task_id=img_md5)
+        # Main.choose(model_name="Painter",content=material_path,output=work.image.path)
+        print('''Main.choose(model_name="Painter",content=material_path,output=work.image.path)''')
+        userworks.works = work
+        userworks.save()
+
+        # data={"status":"success","task_id": task_id}
+        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image),"content":material_path,"task_id":img_md5}
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+    def get(self, request):
+        return render(request, template_name="functionLineArt.html")
+
+class GenerateFigureView(LoginRequiredMixin, View):
+    def post(self, request):
+        work = Works()
+        userworks = UserWorks()
+
+        name = request.POST.get('name', "未命名作品")
+        if name== '':
+            name="未命名作品"
+        desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        if desc=='':
+            desc="这篇作品还没有作品描述"
+        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
+
+
+        tag="生成动漫"
+
+        userworks.user = request.user
+        userworks.material = userImage
+        userworks.save()
+
+
+        material_path=userworks.material.path
+
+        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
+
+        # 保存生成的作品
+        work.tag = tag
+        work.name = name
+        work.desc = desc
+        work.image.save("work.jpg", userGenerateGray)
+        work.save()
+
+        # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
+        # 线稿生成 sketch
+        print('''Main.choose(model_name="Figure",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
+        img_md5 = get_md5_01(material_path)
+
+        # task_id=str(do_figure.delay(content=material_path,output=work.image.path))
+        do_figure(content=material_path,output=work.image.path,task_id=img_md5)
+        userworks.works = work
+        userworks.save()
+        # data={"status":"success","task_id": task_id}
+        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image), "content": material_path,
+                "task_id": img_md5}
+        return HttpResponse(json.dumps(data), content_type="application/json")
+    def get(self, request):
+        return render(request, template_name="functionComic.html")
+
+class GenerateChineseView(LoginRequiredMixin, View):
+    def post(self, request):
+        work = Works()
+        userworks = UserWorks()
+
+        name = request.POST.get('name', "未命名作品")
+        if name== '':
+            name="未命名作品"
+        desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        if desc=='':
+            desc="这篇作品还没有作品描述"
+        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
+
+
+        tag="水墨画生成"
+
+        userworks.user = request.user
+        userworks.material = userImage
+        userworks.save()
+
+
+        material_path=userworks.material.path
+
+        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
+
+
+        # 保存生成的作品
+        work.tag = tag
+        work.name = name
+        work.desc = desc
+        work.image.save("work.jpg", userGenerateGray)
+        work.save()
+
+        # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
+        # 线稿生成 sketch
+
+        print('''Main.choose(model_name="Chinese",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
+        # task_id=str(do_chinese.delay(content=material_path,output=work.image.path))
+        img_md5 = get_md5_01(material_path)
+
+        do_chinese(content=material_path,output=work.image.path,task_id=img_md5)
+        userworks.works = work
+        userworks.save()
+        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image), "content": material_path,
+                "task_id": img_md5}        # data = {"status": "success", "task_id": str("sssss")}
+        # data={"status":"success","task_id": task_id}
+        return HttpResponse(json.dumps(data), content_type="application/json")
+    def get(self, request):
+        return render(request, template_name="functionChinese.html")
+
+class GenerateLineView(LoginRequiredMixin, View):
+    def post(self, request):
+        work = Works()
+        userworks = UserWorks()
+
+        name = request.POST.get('name', "未命名作品")
+        if name== '':
+            name="未命名作品"
+        desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        if desc=='':
+            desc="这篇作品还没有作品描述"
+        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
+
+        tag="生成线稿"
+
+
+
+        userworks.user = request.user
+        userworks.material = userImage
+        userworks.save()
+
+
+        material_path=userworks.material.path
+
+        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
+
+        # 保存生成的作品
+        work.tag = tag
+        work.name = name
+        work.desc = desc
+        work.image.save("work.jpg", userGenerateGray)
+        work.save()
+        # task_id=str(do_sketch.delay(content=material_path,output=work.image.path))
+        img_md5 = get_md5_01(material_path)
+
+        do_sketch(content=material_path,output=work.image.path,task_id=img_md5)
+        print('''Main.choose(model_name="Sketch",content=material_path,output=work.image.path)''')
+        userworks.works = work
+        userworks.save()
+        # data={"status":"success","task_id": task_id}
+        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image), "content": material_path,
+                "task_id": img_md5}
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+    def get(self, request):
+        return render(request, template_name="functionLine.html")
+
+class GenerateStyleView(LoginRequiredMixin, View):
+    def post(self, request):
+        work = Works()
+        userworks = UserWorks()
+
+        name = request.POST.get('name', "未命名作品")
+        if name== '':
+            name="未命名作品"
+        desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        if desc=='':
+            desc="这篇作品还没有作品描述"
+        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
+
+
+        tag="风格生成"
+
+        style = request.POST.get('style', "0")
+
+
+        userworks.user = request.user
+        userworks.material = userImage
+        userworks.save()
+
+
+        material_path=userworks.material.path
+
+        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
+
+
+        # 保存生成的作品
+        work.tag = tag
+        work.name = name
+        work.desc = desc
+        work.image.save("work.jpg", userGenerateGray)
+        work.save()
+
+        # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
+        # 线稿生成 sketch
+        # task_id=str(do_style.delay(style_model = style_model,content=material_path,output=work.image.path))
+        img_md5 = get_md5_01(material_path)
+        do_style(style = style,content=material_path,output=work.image.path,task_id=img_md5)
+        print('''Main.choose(model_name="StyleTransfer",content=material_path,output=work.image.path,style_model = style_model)''')
+        userworks.works = work
+        userworks.save()
+        # data={"status":"success","task_id": task_id}
+        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image), "content": material_path,
+                "task_id": img_md5}
+        return HttpResponse(json.dumps(data), content_type="application/json")
+    def get(self, request):
+        return render(request, template_name="functionStyle.html")
+
+
+
+
 class GenerateGrayView(LoginRequiredMixin, View):
     def post(self, request):
         work = Works()
@@ -520,270 +795,6 @@ class GenerateGrayView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, template_name="functionGray.html")
 
-class GenerateLineArtView(LoginRequiredMixin, View):
-    def post(self, request):
-        work = Works()
-        userworks = UserWorks()
-        name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
-        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
-        tag="线稿上色"
-        userworks.user = request.user
-        userworks.material = userImage
-        userworks.save()
-
-
-        material_path=userworks.material.path
-
-        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
-        # 保存生成的作品
-        work.tag = tag
-        work.name = name
-        work.desc = desc
-        work.image.save("work.jpg", userGenerateGray)
-        work.save()
-
-        task_id=str(do_painter.delay(content=material_path,output=work.image.path))
-
-        # Main.choose(model_name="Painter",content=material_path,output=work.image.path)
-        print('''Main.choose(model_name="Painter",content=material_path,output=work.image.path)''')
-
-
-        userworks.works = work
-        userworks.save()
-        data={"status":"success","task_id": task_id}
-
-
-        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
-        return HttpResponse(json.dumps(data), content_type="application/json")
-
-    def get(self, request):
-        return render(request, template_name="functionLineArt.html")
-
-class GenerateFigureView(LoginRequiredMixin, View):
-    def post(self, request):
-        work = Works()
-        userworks = UserWorks()
-
-        name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
-        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
-
-        tag="生成动漫"
-
-        userworks.user = request.user
-        userworks.material = userImage
-        userworks.save()
-
-
-        material_path=userworks.material.path
-
-        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
-        # 保存生成的作品
-        work.tag = tag
-        work.name = name
-        work.desc = desc
-        work.image.save("work.jpg", userGenerateGray)
-        work.save()
-
-        # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
-        # 线稿生成 sketch
-        print('''Main.choose(model_name="Figure",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
-
-        task_id=str(do_figure.delay(content=material_path,output=work.image.path))
-
-
-        userworks.works = work
-        userworks.save()
-        data={"status":"success","task_id": task_id}
-
-
-        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
-        return HttpResponse(json.dumps(data), content_type="application/json")
-    def get(self, request):
-        return render(request, template_name="functionComic.html")
-
-class GenerateChineseView(LoginRequiredMixin, View):
-    def post(self, request):
-        work = Works()
-        userworks = UserWorks()
-
-        name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
-        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
-
-        tag="水墨画生成"
-
-        userworks.user = request.user
-        userworks.material = userImage
-        userworks.save()
-
-
-        material_path=userworks.material.path
-
-        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
-
-        # 保存生成的作品
-        work.tag = tag
-        work.name = name
-        work.desc = desc
-        work.image.save("work.jpg", userGenerateGray)
-        work.save()
-
-        # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
-        # 线稿生成 sketch
-
-        print('''Main.choose(model_name="Chinese",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
-        task_id=str(do_chinese.delay(content=material_path,output=work.image.path))
-
-
-        userworks.works = work
-        userworks.save()
-
-        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
-        # data = {"status": "success", "task_id": str("sssss")}
-        data={"status":"success","task_id": task_id}
-        print(data)
-
-        return HttpResponse(json.dumps(data), content_type="application/json")
-    def get(self, request):
-        return render(request, template_name="functionChinese.html")
-
-class GenerateLineView(LoginRequiredMixin, View):
-    def post(self, request):
-        work = Works()
-        userworks = UserWorks()
-
-        name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
-        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
-        tag="生成线稿"
-
-
-
-        userworks.user = request.user
-        userworks.material = userImage
-        userworks.save()
-
-
-        material_path=userworks.material.path
-
-        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
-        # 保存生成的作品
-        work.tag = tag
-        work.name = name
-        work.desc = desc
-        work.image.save("work.jpg", userGenerateGray)
-        work.save()
-        task_id=str(do_sketch.delay(content=material_path,output=work.image.path))
-
-        print('''Main.choose(model_name="Sketch",content=material_path,output=work.image.path)''')
-
-        userworks.works = work
-        userworks.save()
-        data={"status":"success","task_id": task_id}
-
-
-        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
-        return HttpResponse(json.dumps(data), content_type="application/json")
-
-    def get(self, request):
-        return render(request, template_name="functionLine.html")
-
-
-class GenerateStyleView(LoginRequiredMixin, View):
-    def post(self, request):
-        work = Works()
-        userworks = UserWorks()
-
-        name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
-        userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
-
-        tag="风格生成"
-
-        style = request.POST.get('style', "0")
-
-
-        userworks.user = request.user
-        userworks.material = userImage
-        userworks.save()
-
-
-        material_path=userworks.material.path
-
-        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
-
-        # 保存生成的作品
-        work.tag = tag
-        work.name = name
-        work.desc = desc
-        work.image.save("work.jpg", userGenerateGray)
-        work.save()
-
-        # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
-        # 线稿生成 sketch
-
-        if style=="0":
-            style_model="/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt"
-        if style=="1":
-            style_model="/home/ai/AI_DCS/AIDCS/StyleTransfer/models/la_muse.ckpt"
-        if style=="2":
-            style_model="/home/ai/AI_DCS/AIDCS/StyleTransfer/models/rain_princess.ckpt"
-        if style=="3":
-            style_model="/home/ai/AI_DCS/AIDCS/StyleTransfer/models/shipwreck.ckpt"
-        if style=="4":
-            style_model="/home/ai/AI_DCS/AIDCS/StyleTransfer/models/the_scream.ckpt"
-        if style=="5":
-            style_model="/home/ai/AI_DCS/AIDCS/StyleTransfer/models/udnie.ckpt"
-
-        task_id=str(do_style.delay(style_model = style_model,content=material_path,output=work.image.path))
-
-        print('''Main.choose(model_name="StyleTransfer",content=material_path,output=work.image.path,style_model = style_model)''')
-
-
-
-
-        userworks.works = work
-        userworks.save()
-        data={"status":"success","task_id": task_id}
-
-
-        # data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image)}
-        return HttpResponse(json.dumps(data), content_type="application/json")
-    def get(self, request):
-        return render(request, template_name="functionStyle.html")
-
 class GenerateLogoView(LoginRequiredMixin, View):
     def post(self, request):
         work = Works()
@@ -831,6 +842,14 @@ class GenerateLogoView(LoginRequiredMixin, View):
         return HttpResponse(json.dumps(data), content_type="application/json")
     def get(self, request):
         return render(request, template_name="functionLogo.html")
+
+
+
+
+
+
+
+
 
 # 微信接口
 class WXUserinfoView(View,CommonResponseMixin):

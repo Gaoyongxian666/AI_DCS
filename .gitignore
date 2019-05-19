@@ -111,6 +111,7 @@ apps/operation/migrations
 apps/works/migrations
 apps/users/migrations
 .idea
+Task_queue
 !apps/chat/migrations/__init__.py
 !apps/operation/migrations/__init__.py
 !apps/works/migrations/__init__.py

@@ -201,6 +201,7 @@ class ChatConsumer2(AsyncWebsocketConsumer):
         message = text_data_json['message']
         print("收到前端发送的消息："+message)
 
+
         if message=="isok?":
             isok=is_ok(self.task_id)
             info = get_info(self.task_id)
@@ -212,6 +213,7 @@ class ChatConsumer2(AsyncWebsocketConsumer):
                 'sum': sum,
                 'task_status':isok
             }))
+
 
         if message == "close":
             await self.channel_layer.group_send(
@@ -239,15 +241,23 @@ class ChatConsumer2(AsyncWebsocketConsumer):
         type=event['chat_type']
         if type==0:
             info=get_info(self.task_id)
-            sum=info["sum"]
-            position=info["position"]
+            if info=="already":
+                await self.send(text_data=json.dumps({
+                    "message": "already",  # 触发轮询
+                    'position': 1,
+                    'sum': 1,
+                    'task_status': True
+                }))
+            else:
+                sum=info["sum"]
+                position=info["position"]
 
-            await self.send(text_data=json.dumps({
-                "message": "0task",# 触发轮询
-                'position': position,
-                'sum':sum,
-                'task_status':False
-            }))
+                await self.send(text_data=json.dumps({
+                    "message": "0task",# 触发轮询
+                    'position': position,
+                    'sum':sum,
+                    'task_status':False
+                }))
         if type==1:
             await self.send(text_data=json.dumps({
                 'message': event['message']
@@ -256,24 +266,27 @@ class ChatConsumer2(AsyncWebsocketConsumer):
 
 
 def get_info(task_id):
-    r = redis.Redis(host='127.0.0.1', port=6379)
-    wait_task = r.lrange('celery', 0, 100)
+    r = redis.Redis(host='127.0.0.1', port=6379,db=1)
+    wait_task = r.lrange('queue:aidcs', 0, 1000)
     sum=len(wait_task)+1
-    wait_task=reversed(wait_task)
     n=1
     for wait_task_ in wait_task:
-        n=n+1
-        task_dict = json.loads(wait_task_.decode("utf8"))
-        resis_task_id=task_dict["headers"]["id"]
-        if task_id==resis_task_id:
-            return {"position":n,"sum":sum}
+        try:
+            n=n+1
+            task_dict = json.loads(wait_task_.decode("utf8"))
+            resis_task_id=task_dict["task_id"]
+            if task_id==resis_task_id:
+                return {"position":n,"sum":sum}
+        except:
+            return "already"
 
-    else:return {"position":1,"sum":sum}
+    else:
+        return {"position":1,"sum":sum}
 
 
 def is_ok(task_id):
-    r = redis.Redis(host='127.0.0.1', port=6379)
-    cur_task_id_name = 'celery-task-meta-' + task_id
+    r = redis.Redis(host='127.0.0.1', port=6379,db=1)
+    cur_task_id_name =task_id
     flag = r.exists(cur_task_id_name)
     if flag:
         r.delete(cur_task_id_name)

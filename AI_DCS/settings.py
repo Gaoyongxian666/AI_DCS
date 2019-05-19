@@ -16,11 +16,24 @@ import os
 import logging
 import django.utils.log
 import logging.handlers
+
+# 项目根目录
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import sys
 
+
+BASE_DIR_father =os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 BASE_LOG_DIR = os.path.join(BASE_DIR, "log")
+
+# 使各个模块，可以导入
+# 注意init文件
+sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
+sys.path.insert(0,os.path.join(BASE_DIR, 'extra_apps'))
+sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
+sys.path.insert(0,BASE_DIR_father)
+
 
 
 
@@ -118,16 +131,6 @@ BASE_LOG_DIR = os.path.join(BASE_DIR, "log")
 # }
 
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import sys
-
-
-# 使各个模块，可以导入
-# 注意init文件
-
-sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
-sys.path.insert(0,os.path.join(BASE_DIR, 'extra_apps'))
-sys.path.insert(0,os.path.join(BASE_DIR, 'extra_apps/AIDCS'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -139,7 +142,7 @@ SECRET_KEY = 'qp5wa05m41^eb*f%)i7m1_bh+^%5)$hdd^2lzp(rkg$k)nr0iz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.105','192.168.1.108','0.0.0.0','127.0.0.1','192.168.1.102','121.193.204.81','106.13.37.131','www.aidcs.cn','aidcs.cn','192.168.1.112','192.168.1.111','*.*.*.*']
+ALLOWED_HOSTS = ['192.168.1.105','192.168.1.109','192.168.1.108','0.0.0.0','127.0.0.1','192.168.1.102','121.193.204.81','106.13.37.131','www.aidcs.cn','aidcs.cn','192.168.1.112','192.168.1.111','*.*.*.*']
 
 
 
@@ -273,7 +276,7 @@ STATIC_URL = '/static/'
 
 # 当运行 python manage.py collectstatic 的时候
 # STATIC_ROOT 文件夹 是用来将所有STATICFILES_DIRS中所有文件夹中的文件，以及各app中static中的文件都复制过来
-# 把这些文件放到一起是为了用apache等部署的时候更方便
+# 把这些文件放到一起是为了用apache等部署的时候更方便 ，比如nginx 的反向代理
 STATIC_ROOT = '/home/ai/AI_DCS/static/'
 
 # 其它 存放静态文件的文件夹，可以用来存放项目中公用的静态文件，里面不能包含 STATIC_ROOT
