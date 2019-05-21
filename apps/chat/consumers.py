@@ -164,29 +164,23 @@ class ChatConsumer2(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': "chat_message",
-                'message': self.task_id+"已经加入聊天频道",
-                'chat_type': 0
+                'message': self.task_id+":已经加入聊天频道",
+                'chat_type': 0  # 标式每个人都要检测自己的状态
             }
         )
 
     async def disconnect(self, close_code):
-        app = Celery('AIDCS',
-                     broker='redis://127.0.0.1:6379/0',
-                     backend='redis://127.0.0.1:6379/0',
-                     include=['AIDCS.tasks'])
-        # print(app.result)
-        app.control.revoke(task_id=self.task_id)
+        print(self.task_id+":websocket已经断开")
 
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': "chat_message",
                 'message': self.task_id + "已经离开聊天频道",
-                'chat_type': 0
+                'chat_type': 0 # 标式每个人都要检测自己的状态
             }
         )
         await self.close()
-        # Leave room group
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -201,29 +195,28 @@ class ChatConsumer2(AsyncWebsocketConsumer):
         message = text_data_json['message']
         print("收到前端发送的消息："+message)
 
+        # if message=="isok?":
+        #     isok=is_ok(self.task_id)
+        #     info = get_info(self.task_id)
+        #     sum = info["sum"]
+        #     position = info["position"]
+        #     await self.send(text_data=json.dumps({
+        #         "message":"task",
+        #         'position': position,
+        #         'sum': sum,
+        #         'task_status':isok
+        #     }))
 
-        if message=="isok?":
-            isok=is_ok(self.task_id)
-            info = get_info(self.task_id)
-            sum = info["sum"]
-            position = info["position"]
-            await self.send(text_data=json.dumps({
-                "message":"task",
-                'position': position,
-                'sum': sum,
-                'task_status':isok
-            }))
 
-
-        if message == "close":
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': "chat_message",
-                    'message': self.task_id + "已经离开聊天频道",
-                    'chat_type': 0
-                }
-            )
+        # if message == "close":
+        #     await self.channel_layer.group_send(
+        #         self.room_group_name,
+        #         {
+        #             'type': "chat_message",
+        #             'message': self.task_id + "已经离开聊天频道",
+        #             'chat_type': 0
+        #         }
+        #     )
 
         # await self.channel_layer.group_send(
         #     self.room_group_name,
@@ -242,18 +235,19 @@ class ChatConsumer2(AsyncWebsocketConsumer):
         if type==0:
             info=get_info(self.task_id)
             if info=="already":
-                await self.send(text_data=json.dumps({
-                    "message": "already",  # 触发轮询
-                    'position': 1,
-                    'sum': 1,
-                    'task_status': True
-                }))
+                pass
+                # await self.send(text_data=json.dumps({
+                #     "message": "task_id解析错误",
+                #     'position': 1,
+                #     'sum': 1,
+                #     'task_status': True
+                # }))
             else:
                 sum=info["sum"]
                 position=info["position"]
 
                 await self.send(text_data=json.dumps({
-                    "message": "0task",# 触发轮询
+                    "message": "正常",# 触发轮询
                     'position': position,
                     'sum':sum,
                     'task_status':False
@@ -270,18 +264,20 @@ def get_info(task_id):
     wait_task = r.lrange('queue:aidcs', 0, 1000)
     sum=len(wait_task)+1
     n=1
-    for wait_task_ in wait_task:
-        try:
-            n=n+1
-            task_dict = json.loads(wait_task_.decode("utf8"))
-            resis_task_id=task_dict["task_id"]
-            if task_id==resis_task_id:
-                return {"position":n,"sum":sum}
-        except:
-            return "already"
-
-    else:
+    if wait_task:
+        print("队列为空")
         return {"position":1,"sum":sum}
+    else:
+        for wait_task_ in wait_task:
+            try:
+                n=n+1
+                task_dict = json.loads(wait_task_.decode("utf8"))
+                resis_task_id=task_dict["task_id"]
+                if task_id==resis_task_id:
+                    return {"position":n,"sum":sum}
+            except:
+                print("task_id解析错误")
+                return "already"
 
 
 def is_ok(task_id):
@@ -290,8 +286,10 @@ def is_ok(task_id):
     flag = r.exists(cur_task_id_name)
     if flag:
         r.delete(cur_task_id_name)
+        print("执行完成，删除key")
         return True
     else:
+        print("不存在key")
         return False
 
 

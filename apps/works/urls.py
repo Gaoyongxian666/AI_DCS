@@ -15,6 +15,8 @@ from django.urls import path
 
 from works.views import *
 
+from apps.works.views import WXGenerateLineArtView
+
 urlpatterns = [
     #课程列表页
     path('list/', WorksListView.as_view(), name="works_list"),
@@ -67,13 +69,12 @@ urlpatterns = [
     # path('wxadd_comment/', AddComentsView.as_view(), name="add_comment"),
 
     path('wxGenerateGrayView/', GenerateGrayView.as_view(), name="generategray"),
-    path('wxGenerateLineArtView/', GenerateLineArtView.as_view(), name="generatelineart"),
+    path('wxGenerateLineArtView/', WXGenerateLineArtView.as_view(), name="generatelineart"),
     path('wxGenerateLineView/', GenerateLineView.as_view(), name="generateline"),
     path('wxGenerateFigureView/', GenerateFigureView.as_view(), name="generatefigure"),
     path('wxGenerateLogoView/', GenerateLogoView.as_view(), name="generatelogo"),
 
     path('wxGenerateStyleView/', GenerateStyleView.as_view(), name="generatestyle"),
-
     path('wxGenerateChineseView/', GenerateChineseView.as_view(), name="generatechinese"),
 
 ]
