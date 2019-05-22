@@ -45,7 +45,6 @@ urlpatterns = [
     path('wxmyfav/works/', WXMyFavWorksView.as_view(), name="wxmyfav_works"),
     path('wxmylove/works/', WXMyLoveWorksView.as_view(), name="wxmylove_works"),
     path('wxmy/works/', WXMyWorksView.as_view(), name="wxmy_works"),
-    # path('wxmessage/', MyMessageView.as_view(), name="my_message"),
 
     path('status', views.get_status, name='get_status'),
 

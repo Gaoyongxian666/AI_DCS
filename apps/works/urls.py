@@ -15,7 +15,8 @@ from django.urls import path
 
 from works.views import *
 
-from apps.works.views import WXGenerateLineArtView
+from apps.works.views import WXGenerateLineArtView, WXGenerateLineView, WXGenerateFigureView, WXGenerateStyleView, \
+    WXGenerateChineseView
 
 urlpatterns = [
     #课程列表页
@@ -65,16 +66,10 @@ urlpatterns = [
     path('wxadd_fav/', WXAddFavView.as_view(), name="wxadd_fav"),
     path('wxadd_love/', WXAddLoveView.as_view(), name="wxadd_love"),
     path('wxadd_download/', WXDownloadView.as_view(), name="wxadd_download"),
-
-    # path('wxadd_comment/', AddComentsView.as_view(), name="add_comment"),
-
-    path('wxGenerateGrayView/', GenerateGrayView.as_view(), name="generategray"),
-    path('wxGenerateLineArtView/', WXGenerateLineArtView.as_view(), name="generatelineart"),
-    path('wxGenerateLineView/', GenerateLineView.as_view(), name="generateline"),
-    path('wxGenerateFigureView/', GenerateFigureView.as_view(), name="generatefigure"),
-    path('wxGenerateLogoView/', GenerateLogoView.as_view(), name="generatelogo"),
-
-    path('wxGenerateStyleView/', GenerateStyleView.as_view(), name="generatestyle"),
-    path('wxGenerateChineseView/', GenerateChineseView.as_view(), name="generatechinese"),
+    path('wxGenerateLineArtView/', WXGenerateLineArtView.as_view(), name="wxgeneratelineart"),
+    path('wxGenerateLineView/', WXGenerateLineView.as_view(), name="wxgenerateline"),
+    path('wxGenerateFigureView/', WXGenerateFigureView.as_view(), name="wxgeneratefigure"),
+    path('wxGenerateStyleView/', WXGenerateStyleView.as_view(), name="wxgeneratestyle"),
+    path('wxGenerateChineseView/', WXGenerateChineseView.as_view(), name="wxgeneratechinese"),
 
 ]

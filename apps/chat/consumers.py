@@ -195,38 +195,7 @@ class ChatConsumer2(AsyncWebsocketConsumer):
         message = text_data_json['message']
         print("收到前端发送的消息："+message)
 
-        # if message=="isok?":
-        #     isok=is_ok(self.task_id)
-        #     info = get_info(self.task_id)
-        #     sum = info["sum"]
-        #     position = info["position"]
-        #     await self.send(text_data=json.dumps({
-        #         "message":"task",
-        #         'position': position,
-        #         'sum': sum,
-        #         'task_status':isok
-        #     }))
 
-
-        # if message == "close":
-        #     await self.channel_layer.group_send(
-        #         self.room_group_name,
-        #         {
-        #             'type': "chat_message",
-        #             'message': self.task_id + "已经离开聊天频道",
-        #             'chat_type': 0
-        #         }
-        #     )
-
-        # await self.channel_layer.group_send(
-        #     self.room_group_name,
-        #     {
-        #         'type': "chat_message",
-        #         'message': self.task_id+"说："+message,
-        #         'chat_type':0
-        #     }
-        # )
-        # print('向通道层内发送消息,借由chat_message向每个人发送消息')
 
     # 接收到服务器后台消息
     async def chat_message(self, event):
@@ -245,7 +214,6 @@ class ChatConsumer2(AsyncWebsocketConsumer):
             else:
                 sum=info["sum"]
                 position=info["position"]
-
                 await self.send(text_data=json.dumps({
                     "message": "正常",# 触发轮询
                     'position': position,

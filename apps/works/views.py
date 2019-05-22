@@ -1,6 +1,5 @@
 import json
 import os
-
 from django.core.files.base import ContentFile
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.db.models import Q
@@ -32,12 +31,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 class WorksListView(View):
     def get(self, request):
         all_works = Works.objects.all().order_by("-add_time")
-        sort = request.GET.get('sort', 1)
+        sort = request.GET.get('sort', 7)
         print(sort)
         try:
             sort = request.GET['sort']
         except MultiValueDictKeyError:
-            sort="6"
+            sort="7"
 
         intro='''<h3>Chinese Brush Painting </h3>
                        <p>风景画智能转化成中国风水墨画</p>
@@ -115,27 +114,7 @@ class WorksListView(View):
         search_keywords = request.GET.get('keywords', "")
         if search_keywords:
             all_works = all_works.filter(Q(name__icontains=search_keywords) | Q(desc__icontains=search_keywords))
-        all_works_=[]
-        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-        default_img_path = Base_dir + "/static/img/1.jpg"
-        md5="ec1d1b1554a049dad66ea68a306bfe1e"
-        # md5="ec1d1b1554a049dad66ea68a306bf1e"
-
-
-
-
-
-        for all_work in all_works:
-            image_path = all_work.image.path
-            img_md5=get_md5_01(image_path)
-
-            
-            if md5==img_md5:
-                continue
-            all_works_.append(all_work)
-            
-
+        all_works_=get_works(all_works)
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
@@ -190,15 +169,9 @@ class WorksDetailView(View):
             print(work_id)
             work = Works.objects.get(id=int(work_id))
             userworks = UserWorks.objects.filter(works=work)
-        
-
         if userworks:
-
             muser = userworks[0].user
             username = muser.username
-
-
-
         # user 不能用
         try:
 
@@ -214,19 +187,15 @@ class WorksDetailView(View):
                 user_name="请登陆"
         except AttributeError:
             user_image = "image/default.png"
-
             user_name = "请登陆"
-
         has_fav_work = False
         has_love_work = False
-
         # 'bool' object is not callable 不能使用request.user.is_authenticated():
         if request.user.is_authenticated:
             if UserFavorite.objects.filter(user=request.user, fav_id=work.id, fav_type=1):
                 has_fav_work = True
             if UserLove.objects.filter(user=request.user, love_id=work.id, love_type=1):
                 has_love_work = True
-
         all_comments = WorksComments.objects.filter(works=work).order_by("-id")
         comment_num=all_comments.count()
         user_list=[]
@@ -236,12 +205,8 @@ class WorksDetailView(View):
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
             page = 1
-
-
         p = Paginator(all_comments, 9)
         comments = p.page(page)
-
-
         return render(request, "worksDetails.html", {
             "task_id":task_id,
             "userworks":userworks[0],
@@ -989,21 +954,7 @@ class WXWorksListView(View):
         search_keywords = request.GET.get('keywords', "")
         if search_keywords:
             all_works = all_works.filter(Q(name__icontains=search_keywords) | Q(desc__icontains=search_keywords))
-        all_works_ = []
-        Base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-        default_img_path = Base_dir + "/static/img/1.jpg"
-        # md5="ec1d1b1554a049dad66ea68a306bfe1e"
-        md5 = "ec1d1b1554a049dad66ea68a306bf1e"
-
-        for all_work in all_works:
-            image_path = all_work.image.path
-            img_md5 = get_md5_01(image_path)
-
-            if md5 == img_md5:
-                continue
-            all_works_.append(all_work)
-
+        all_works_ = get_works(all_works)
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
@@ -1025,7 +976,6 @@ class WXWorksListView(View):
 
 class WXWorksDetailView(View,CommonResponseMixin):
     def get(self, request,work_id):
-        # sort = request.GET['sort']
         if not already_authorized(request):
             response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
             return JsonResponse(response, safe=False)
@@ -1036,28 +986,12 @@ class WXWorksDetailView(View,CommonResponseMixin):
         if userworks:
             muser = userworks.user
             username = muser.username
-
         has_fav_work = False
         has_love_work = False
         if UserFavorite.objects.filter(user=user, fav_id=work.id, fav_type=1):
             has_fav_work = True
         if UserLove.objects.filter(user=user, love_id=work.id, love_type=1):
             has_love_work = True
-
-        # all_comments = WorksComments.objects.filter(works=work).order_by("-id")
-        # comment_num = all_comments.count()
-        # try:
-        #     page = request.GET.get('page', 1)
-        # except PageNotAnInteger:
-        #     page = 1
-        # p = Paginator(all_comments, 9)
-        # comments = p.page(page)
-        # work_list_ = []
-        # have_next = False
-        # for comment in comments:
-        #     work_list_.append((work.id, str(work.image)))
-        # if comments.has_next():
-        #     have_next = True
         response = {"work_name": work.name, "work_material": str(userworks.material),"work_image": str(work.image), "has_fav_work": has_fav_work,"has_love_work": has_love_work,
                     "work_download_nums": work.download_nums,"work_fav_nums": work.fav_nums,"work_love_nums": work.love_nums,"work_tag": work.tag,
                     "username": username,"work_add_time": work.add_time,"code": ReturnCode.SUCCESS}
@@ -1087,8 +1021,7 @@ class WXAddFavView(View,CommonResponseMixin):
                     work.fav_nums = 0
                 work.save()
             data = {"status": "success", "msg": "收藏", "fav_num": work.fav_nums}
-            return HttpResponse(json.dumps(data), content_type="application/json")
-            # return HttpResponse('{"status":"success", "msg":"收藏"}', content_type='application/json')
+            return JsonResponse(data=data, safe=False)
         else:
             user_fav = UserFavorite()
             # 判断非正常请求,与默认有关
@@ -1104,7 +1037,7 @@ class WXAddFavView(View,CommonResponseMixin):
                     work.save()
                 # return HttpResponse('{"status":"success", "msg":"已收藏"}', content_type='application/json')
                 data = {"status": "success", "msg":"已收藏","fav_num": work.fav_nums}
-                return HttpResponse(json.dumps(data), content_type="application/json")
+                return JsonResponse(data=data, safe=False)
             else:
                 return HttpResponse('{"status":"fail", "msg":"收藏出错"}', content_type='application/json')
 
@@ -1130,7 +1063,7 @@ class WXAddLoveView(View,CommonResponseMixin):
                     work.love_nums = 0
                 work.save()
             data = {"status": "success", "msg":"点赞","love_num": work.love_nums}
-            return HttpResponse(json.dumps(data), content_type="application/json")
+            return JsonResponse(data=data, safe=False)
         else:
             user_love = UserLove()
             # 判断非正常请求,与默认有关
@@ -1144,7 +1077,7 @@ class WXAddLoveView(View,CommonResponseMixin):
                     work.love_nums += 1
                     work.save()
                 data = {"status": "success", "msg": "已点赞", "love_num": work.love_nums}
-                return HttpResponse(json.dumps(data), content_type="application/json")
+                return JsonResponse(data=data, safe=False)
             else:
                 return HttpResponse('{"status":"fail", "msg":"点赞出错"}', content_type='application/json')
 
@@ -1169,8 +1102,6 @@ class WXDownloadView(View):
         data = {"status": "success", "msg":"下载","download_num": download_num}
         return HttpResponse(json.dumps(data), content_type="application/json")
 
-
-
 class WXGenerateLineArtView(CommonResponseMixin, View):
     def post(self, request):
         if not already_authorized(request):
@@ -1187,25 +1118,18 @@ class WXGenerateLineArtView(CommonResponseMixin, View):
         if desc=='':
             desc="这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
         tag="线稿上色"
-
         userworks.user = user
         userworks.material = userImage
         userworks.save()
-
-
         material_path=userworks.material.path
-
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
         # 保存生成的作品
         work.tag = tag
         work.name = name
         work.desc = desc
         work.image.save("work.jpg", userGenerateGray)
         work.save()
-
         img_md5 = get_md5_01(material_path)
         # task_id=str(do_painter.delay(content=material_path,output=work.image.path))
         do_painter(content=material_path,output=work.image.path,task_id=img_md5)
@@ -1213,17 +1137,20 @@ class WXGenerateLineArtView(CommonResponseMixin, View):
         print('''Main.choose(model_name="Painter",content=material_path,output=work.image.path)''')
         userworks.works = work
         userworks.save()
-
         # data={"status":"success","task_id": task_id}
         data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image),"content":material_path,"task_id":img_md5}
-        return HttpResponse(json.dumps(data), content_type="application/json")
+        return JsonResponse(data=data, safe=False)
 
 
 class WXGenerateFigureView(CommonResponseMixin, View):
     def post(self, request):
+        if not already_authorized(request):
+            response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
+            return JsonResponse(response, safe=False)
+        open_id = request.session.get('open_id')
+        user = UserProfile.objects.get(open_id=open_id)
         work = Works()
         userworks = UserWorks()
-
         name = request.POST.get('name', "未命名作品")
         if name== '':
             name="未命名作品"
@@ -1231,190 +1158,146 @@ class WXGenerateFigureView(CommonResponseMixin, View):
         if desc=='':
             desc="这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
-
         tag="生成动漫"
-
-        userworks.user = request.user
+        userworks.user = user
         userworks.material = userImage
         userworks.save()
-
-
         material_path=userworks.material.path
-
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
         # 保存生成的作品
         work.tag = tag
         work.name = name
         work.desc = desc
         work.image.save("work.jpg", userGenerateGray)
         work.save()
-
-        # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
-        # 线稿生成 sketch
-        print('''Main.choose(model_name="Figure",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
         img_md5 = get_md5_01(material_path)
-
-        # task_id=str(do_figure.delay(content=material_path,output=work.image.path))
         do_figure(content=material_path,output=work.image.path,task_id=img_md5)
+        print('''Main.choose(model_name="Figure",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
         userworks.works = work
         userworks.save()
-        # data={"status":"success","task_id": task_id}
-        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image), "content": material_path,
-                "task_id": img_md5}
-        return HttpResponse(json.dumps(data), content_type="application/json")
-    def get(self, request):
-        return render(request, template_name="functionComic.html")
+        data={"status":"success","image_path": Active_IP+MEDIA_URL+str(work.image),"content":material_path,"task_id":img_md5}
+        return JsonResponse(data=data, safe=False)
+
+
+
 
 class WXGenerateChineseView(CommonResponseMixin, View):
     def post(self, request):
+        if not already_authorized(request):
+            response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
+            return JsonResponse(response, safe=False)
+        open_id = request.session.get('open_id')
+        user = UserProfile.objects.get(open_id=open_id)
         work = Works()
         userworks = UserWorks()
-
         name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
+        if name == '':
+            name = "未命名作品"
         desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
+        if desc == '':
+            desc = "这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
-
-        tag="水墨画生成"
-
-        userworks.user = request.user
+        tag = "水墨画生成"
+        userworks.user = user
         userworks.material = userImage
         userworks.save()
-
-
-        material_path=userworks.material.path
-
-        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
-
+        material_path = userworks.material.path
+        userGenerateGray = ContentFile(open(BASE_DIR + "/image.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag
         work.name = name
         work.desc = desc
         work.image.save("work.jpg", userGenerateGray)
         work.save()
-
-        # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
-        # 线稿生成 sketch
-
-        print('''Main.choose(model_name="Chinese",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
-        # task_id=str(do_chinese.delay(content=material_path,output=work.image.path))
         img_md5 = get_md5_01(material_path)
+        do_chinese(content=material_path, output=work.image.path, task_id=img_md5)
+        print(
+            '''Main.choose(model_name="Chinese",content=material_path,output=work.image.path,style_model = '/home/ai/AI_DCS/AIDCS/StyleTransfer/models/wave.ckpt')''')
 
-        do_chinese(content=material_path,output=work.image.path,task_id=img_md5)
         userworks.works = work
         userworks.save()
-        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image), "content": material_path,
-                "task_id": img_md5}        # data = {"status": "success", "task_id": str("sssss")}
-        # data={"status":"success","task_id": task_id}
-        return HttpResponse(json.dumps(data), content_type="application/json")
-    def get(self, request):
-        return render(request, template_name="functionChinese.html")
+        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image),
+                "content": material_path, "task_id": img_md5}
+        return JsonResponse(data=data, safe=False)
+
+
 
 class WXGenerateLineView(CommonResponseMixin, View):
     def post(self, request):
+        if not already_authorized(request):
+            response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
+            return JsonResponse(response, safe=False)
+        open_id = request.session.get('open_id')
+        user = UserProfile.objects.get(open_id=open_id)
         work = Works()
         userworks = UserWorks()
-
         name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
+        if name == '':
+            name = "未命名作品"
         desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
+        if desc == '':
+            desc = "这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
         tag="生成线稿"
-
-
-
-        userworks.user = request.user
+        userworks.user = user
         userworks.material = userImage
         userworks.save()
-
-
-        material_path=userworks.material.path
-
-        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
+        material_path = userworks.material.path
+        userGenerateGray = ContentFile(open(BASE_DIR + "/image.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag
         work.name = name
         work.desc = desc
         work.image.save("work.jpg", userGenerateGray)
         work.save()
-        # task_id=str(do_sketch.delay(content=material_path,output=work.image.path))
         img_md5 = get_md5_01(material_path)
-
-        do_sketch(content=material_path,output=work.image.path,task_id=img_md5)
+        do_sketch(content=material_path, output=work.image.path, task_id=img_md5)
         print('''Main.choose(model_name="Sketch",content=material_path,output=work.image.path)''')
         userworks.works = work
         userworks.save()
-        # data={"status":"success","task_id": task_id}
-        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image), "content": material_path,
-                "task_id": img_md5}
-        return HttpResponse(json.dumps(data), content_type="application/json")
+        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image),
+                "content": material_path, "task_id": img_md5}
+        return JsonResponse(data=data, safe=False)
 
-    def get(self, request):
-        return render(request, template_name="functionLine.html")
 
 class WXGenerateStyleView(CommonResponseMixin, View):
     def post(self, request):
+        if not already_authorized(request):
+            response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
+            return JsonResponse(response, safe=False)
+        open_id = request.session.get('open_id')
+        user = UserProfile.objects.get(open_id=open_id)
         work = Works()
         userworks = UserWorks()
-
         name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
+        if name == '':
+            name = "未命名作品"
         desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
+        if desc == '':
+            desc = "这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
-
-
-        tag="风格生成"
-
         style = request.POST.get('style', "0")
 
-
-        userworks.user = request.user
+        tag="风格生成"
+        userworks.user = user
         userworks.material = userImage
         userworks.save()
-
-
-        material_path=userworks.material.path
-
-        userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
-
-
+        material_path = userworks.material.path
+        userGenerateGray = ContentFile(open(BASE_DIR + "/image.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag
         work.name = name
         work.desc = desc
         work.image.save("work.jpg", userGenerateGray)
         work.save()
-
-        # 灰度 colornet 线稿 Painter 风格 StyleTransfer 生成动漫 Figure 水墨画生成 Chinese
-        # 线稿生成 sketch
-        # task_id=str(do_style.delay(style_model = style_model,content=material_path,output=work.image.path))
         img_md5 = get_md5_01(material_path)
-        do_style(style = style,content=material_path,output=work.image.path,task_id=img_md5)
-        print('''Main.choose(model_name="StyleTransfer",content=material_path,output=work.image.path,style_model = style_model)''')
+        do_style(style=style, content=material_path, output=work.image.path, task_id=img_md5)
+        print(
+            '''Main.choose(model_name="StyleTransfer",content=material_path,output=work.image.path,style_model = style_model)''')
         userworks.works = work
         userworks.save()
-        # data={"status":"success","task_id": task_id}
-        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image), "content": material_path,
-                "task_id": img_md5}
-        return HttpResponse(json.dumps(data), content_type="application/json")
-    def get(self, request):
-        return render(request, template_name="functionStyle.html")
-
-
+        data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image),
+                "content": material_path, "task_id": img_md5}
+        return JsonResponse(data=data, safe=False)
 
 

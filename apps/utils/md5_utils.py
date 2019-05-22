@@ -33,6 +33,18 @@ def get_md5_02(file):
     f.close()
     md5 = str(hash_code).lower()
     return md5
+def get_works(all_works):
+    all_works_ = []
+    md5 = "ec1d1b1554a049dad66ea68a306bfe1e"
+    # 比较 md5 值判断是否显示
+    # md5="ec1d1b1554a049dad66ea68a306bf1e"
+    for all_work in all_works:
+        image_path = all_work.image.path
+        img_md5 = get_md5_01(image_path)
+        if md5 == img_md5:
+            continue
+        all_works_.append(all_work)
+    return all_works_
 
 
 if __name__ == "__main__":

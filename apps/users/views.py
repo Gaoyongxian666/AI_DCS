@@ -11,6 +11,7 @@ from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from operation.models import UserFavorite, UserLove, UserWorks, UserMessage
+from utils.md5_utils import get_works
 from works.models import Works
 from .models import UserProfile, EmailVerifyRecord, Banner
 from .forms import LoginForm, RegisterForm, ModifyPwdForm, UserInfoForm, UploadImageForm
@@ -365,8 +366,6 @@ class IndexView(View):
             "gray": gray,
             "chinese": chinese,
             "linege":linege
-
-
         })
 
 
@@ -552,7 +551,6 @@ class WXUploadImageView(View,CommonResponseMixin):
 
 class WXMyFavWorksView(View,CommonResponseMixin):
     def get(self, request):
-        # sort = request.GET['sort']
         if not already_authorized(request):
             response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
             return JsonResponse(response, safe=False)
@@ -588,7 +586,6 @@ class WXMyFavWorksView(View,CommonResponseMixin):
 
 class WXMyLoveWorksView(CommonResponseMixin, View):
     def get(self, request):
-        # sort = request.GET['sort']
         if not already_authorized(request):
             response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
             return JsonResponse(response, safe=False)
@@ -625,7 +622,6 @@ class WXMyLoveWorksView(CommonResponseMixin, View):
 
 class WXMyWorksView(CommonResponseMixin, View):
     def get(self, request):
-        # sort = request.GET['sort']
         if not already_authorized(request):
             response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
             return JsonResponse(response, safe=False)
