@@ -131,10 +131,10 @@
                                         $(".position").text(position);
                                         $(".sum").text(sum);
                                         if (task_status){
-                                            var t = setInterval(function(){
+                                            setTimeout(function(){
                                                 $(".time").text(100 + ' %');
                                             window.location.href="{% url 'users:my_works' %}";
-                                                },1000);
+                                                },3000);
 
                                         }
                                         if (position==1){
@@ -153,9 +153,10 @@
                                             }
                                         }
                             };
-                            chatSocket.onclose = function(e) {
+
+                                chatSocket.onclose = function(e) {
                                     console.error('Chat socket closed unexpectedly');
-                            };
+                                };
                         }
                         else if(data.status ==='fail'){
                              var obj = eval(data);
