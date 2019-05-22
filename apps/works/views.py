@@ -870,7 +870,7 @@ class WXUserinfoView(View,CommonResponseMixin):
 # 默认页码为1，分类代码为6
 # 后台可以传值到前端
 # 前端不一定需要中继站，比如分类sort。完全可以从后台传入。。
-class WXWorksListView(View):
+class WXWorksListView(View,CommonResponseMixin):
     def get(self, request):
         all_works = Works.objects.all().order_by("-add_time")
         try:
@@ -972,7 +972,29 @@ class WXWorksListView(View):
         print(response)
         return JsonResponse(data=response, safe=False)
 
+class WXIndex(View,CommonResponseMixin):
+    def get(self, request):
+        all_works = Works.objects.all().order_by('-love_nums')
+        search_keywords = request.GET.get('keywords', "")
+        if search_keywords:
+            all_works = all_works.filter(Q(name__icontains=search_keywords) | Q(desc__icontains=search_keywords))
+        all_works_ = get_works(all_works)
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
 
+        p = Paginator(all_works_, 9)
+        works = p.page(page)
+        work_list_ = []
+        have_next = False
+        for work in works:
+            work_list_.append({"id":work.id, "image_url":str(work.image)})
+        if works.has_next():
+            have_next = True
+        response = {"work_list": work_list_, "have_next": have_next, "code": ReturnCode.SUCCESS}
+        print(response)
+        return JsonResponse(data=response, safe=False)
 
 class WXWorksDetailView(View,CommonResponseMixin):
     def get(self, request,work_id):
@@ -1299,5 +1321,9 @@ class WXGenerateStyleView(CommonResponseMixin, View):
         data = {"status": "success", "image_path": Active_IP + MEDIA_URL + str(work.image),
                 "content": material_path, "task_id": img_md5}
         return JsonResponse(data=data, safe=False)
+
+
+
+
 
 
