@@ -119,7 +119,6 @@
                             var roomName = data.task_id;
                             var path=data.content;
                             var flag=0;
-                            var task_stt=0;
                             var chatSocket = new WebSocket(
                                     'ws://' + window.location.host +
                                     '/ws/chat/' + roomName + '/');
@@ -132,8 +131,11 @@
                                         $(".position").text(position);
                                         $(".sum").text(sum);
                                         if (task_status){
-                                            $(".time").text(100 + ' %');
+                                            var t = setInterval(function(){
+                                                $(".time").text(100 + ' %');
                                             window.location.href="{% url 'users:my_works' %}";
+                                                },1000);
+
                                         }
                                         if (position==1){
                                             if (flag==0) {
@@ -147,7 +149,7 @@
                                                         window.location.href="{% url 'users:my_works' %}";
 
                                                     }
-                                                },2000);
+                                                },1000);
                                             }
                                         }
                             };

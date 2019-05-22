@@ -199,26 +199,25 @@ class ChatConsumer2(AsyncWebsocketConsumer):
 
     # 接收到服务器后台消息
     async def chat_message(self, event):
+        print("接收到服务器后台消息")
         print(event['message'])
         type=event['chat_type']
+        print(type)
         if type==0:
             info=get_info(self.task_id)
             if info=="already":
+                print("already")
                 pass
-                # await self.send(text_data=json.dumps({
-                #     "message": "task_id解析错误",
-                #     'position': 1,
-                #     'sum': 1,
-                #     'task_status': True
-                # }))
             else:
-                sum=info["sum"]
+                print("ok")
+                task_status=is_ok(self.task_id)
+                my_sum=info["sum"]
                 position=info["position"]
                 await self.send(text_data=json.dumps({
                     "message": "正常",# 触发轮询
                     'position': position,
-                    'sum':sum,
-                    'task_status':False
+                    'sum':my_sum,
+                    'task_status':task_status
                 }))
         if type==1:
             await self.send(text_data=json.dumps({
@@ -232,7 +231,9 @@ def get_info(task_id):
     wait_task = r.lrange('queue:aidcs', 0, 1000)
     sum=len(wait_task)+1
     n=1
-    if wait_task:
+    print(wait_task)
+    # 不能判断wait——task为空
+    if sum==1:
         print("队列为空")
         return {"position":1,"sum":sum}
     else:
@@ -246,6 +247,7 @@ def get_info(task_id):
             except:
                 print("task_id解析错误")
                 return "already"
+        return "already"
 
 
 def is_ok(task_id):

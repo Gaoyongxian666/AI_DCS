@@ -100,7 +100,6 @@
                                 $('.functionLayer').css('display','block');
 
                 var formData = new FormData($('#imgform')[0]);
-{#                formData.append("file", $('#imgform')[0].files[0]);#}
 
                 formData.append("sort","3");
 
@@ -123,7 +122,7 @@
                             var chatSocket = new WebSocket(
                                     'ws://' + window.location.host +
                                     '/ws/chat/' + roomName + '/');
-                                chatSocket.onmessage = function(e) {
+                            chatSocket.onmessage = function(e) {
                                         var data = JSON.parse(e.data);
                                         var task_status = data['task_status'];
                                         var sum = data['sum'];
@@ -131,41 +130,32 @@
                                         var message = data['message'];
                                         $(".position").text(position);
                                         $(".sum").text(sum);
-                                        if(task_status){
-                                            task_stt=1;
+                                        if (task_status){
+                                            var t = setInterval(function(){
+                                                $(".time").text(100 + ' %');
+                                            window.location.href="{% url 'users:my_works' %}";
+                                                },1000);
+
                                         }
-                                        else if (position=="1"){
+                                        if (position==1){
                                             if (flag==0) {
                                                 flag=1;
                                                 var num=0;
                                                 var t = setInterval(function(){
                                                     num++;
                                                     $('.time').text(num+ ' %');
-                                                         chatSocket.send(JSON.stringify({
-                                                        'message': "isok?"
-                                                    }));
-                                                    if(task_stt == 1){
-                                                        clearInterval(t);
-                                                         chatSocket.send(JSON.stringify({
-                                                        'message': "close"
-                                                         }));
-                                                        $(".time").text(100 + ' %');
-                                                        window.location.href="{% url 'users:my_works' %}";
-                                                    }
                                                     if(num>80){
                                                         clearInterval(t);
-                                                         chatSocket.send(JSON.stringify({
-                                                        'message': "close"
-                                                         }));
+                                                        window.location.href="{% url 'users:my_works' %}";
+
                                                     }
-                                                },2000);
+                                                },1000);
                                             }
                                         }
-                                };
-
-                                chatSocket.onclose = function(e) {
+                            };
+                            chatSocket.onclose = function(e) {
                                     console.error('Chat socket closed unexpectedly');
-                                };
+                            };
                         }
                         else if(data.status ==='fail'){
                              var obj = eval(data);
