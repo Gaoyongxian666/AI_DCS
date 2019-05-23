@@ -885,7 +885,7 @@ class WXWorksListView(View,CommonResponseMixin):
                 '''
 
         if sort == "0":
-            all_works = all_works.filter(tag__icontains="logo生成")
+            all_works = Works.objects.all().order_by('-love_nums')
             intro = '''
             <h3>Splendid LOGO</h3>
                        <p>一键logo生成</p>
