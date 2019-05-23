@@ -172,14 +172,6 @@ class ChatConsumer2(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         print(self.task_id+":websocket已经断开")
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': "chat_message",
-                'message': self.task_id + "已经离开聊天频道",
-                'chat_type': 0 # 标式每个人都要检测自己的状态
-            }
-        )
         await self.close()
         await self.channel_layer.group_discard(
             self.room_group_name,
