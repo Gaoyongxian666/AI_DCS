@@ -71,5 +71,6 @@ urlpatterns = [
     path('wxGenerateFigureView/', WXGenerateFigureView.as_view(), name="wxgeneratefigure"),
     path('wxGenerateStyleView/', WXGenerateStyleView.as_view(), name="wxgeneratestyle"),
     path('wxGenerateChineseView/', WXGenerateChineseView.as_view(), name="wxgeneratechinese"),
+    path('WXIndex/', WXIndex.as_view(), name="WXIndex"),
 
 ]
