@@ -1126,7 +1126,9 @@ class WXDownloadView(View):
         post_data = json.loads(post_data)
         download_id = post_data.get('download_id').strip()
         work = Works.objects.get(id=int(download_id))
-        download_num=work.download_nums+1
+        work.download_nums+=1
+        download_num=work.download_nums
+        work.save()
         data = {"status": "success", "msg":"下载","download_num": download_num}
         return HttpResponse(json.dumps(data), content_type="application/json")
 
