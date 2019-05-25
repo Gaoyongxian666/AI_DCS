@@ -9,7 +9,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.safestring import mark_safe
 from django.views import View
 # from AIDCS import Main
-from AI_DCS.settings import MEDIA_URL, Active_IP
+from AI_DCS.settings import MEDIA_URL, Active_IP, client
 # 虽然报错，但是apps 文件已经在setting文件中声明，所有不会报错
 from operation.models import UserFavorite, UserLove, UserWorks, WorksComments
 from users.models import UserProfile
@@ -292,6 +292,8 @@ class WorksDetailView(View):
 
 '''
 
+
+
 # 添加评论
 class AddComentsView(View):
 
@@ -312,6 +314,8 @@ class AddComentsView(View):
             return HttpResponse('{"status":"success", "msg":"添加成功"}', content_type='application/json')
         else:
             return HttpResponse('{"status":"fail", "msg":"添加失败"}', content_type='application/json')
+
+
 
 
 # 收藏
@@ -354,6 +358,8 @@ class AddFavView(View):
                 return HttpResponse(json.dumps(data), content_type="application/json")
             else:
                 return HttpResponse('{"status":"fail", "msg":"收藏出错"}', content_type='application/json')
+
+
 
 # 点赞
 class AddLoveView(View):
@@ -438,6 +444,9 @@ class DownloadView(View):
         return HttpResponse(json.dumps(data), content_type="application/json")
 
 
+
+
+
 from Task_queue.redis_queue import RedisQueue
 
 q = RedisQueue('aidcs', host='localhost', port=6379, db=1)  # 新建队列名为rq
@@ -481,6 +490,11 @@ class GenerateLineArtView(LoginRequiredMixin, View):
             desc="这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
 
+
+
+
+
+
         tag="线稿上色"
         userworks.user = request.user
         userworks.material = userImage
@@ -488,6 +502,16 @@ class GenerateLineArtView(LoginRequiredMixin, View):
 
 
         material_path=userworks.material.path
+
+        response = client.put_object(
+                Bucket='aidcs-1256440297',
+                Body=userImage,
+                Key=material_path,
+                StorageClass='STANDARD',
+                EnableMD5=False
+            )
+        print(response['ETag'])
+        print(response)
 
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
 
@@ -535,6 +559,15 @@ class GenerateFigureView(LoginRequiredMixin, View):
 
 
         material_path=userworks.material.path
+        response = client.put_object(
+                Bucket='aidcs-1256440297',
+                Body=userImage,
+                Key=material_path,
+                StorageClass='STANDARD',
+                EnableMD5=False
+            )
+        print(response['ETag'])
+        print(response)
 
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
 
@@ -583,6 +616,15 @@ class GenerateChineseView(LoginRequiredMixin, View):
 
 
         material_path=userworks.material.path
+        response = client.put_object(
+                Bucket='aidcs-1256440297',
+                Body=userImage,
+                Key=material_path,
+                StorageClass='STANDARD',
+                EnableMD5=False
+            )
+        print(response['ETag'])
+        print(response)
 
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
 
@@ -634,6 +676,15 @@ class GenerateLineView(LoginRequiredMixin, View):
 
 
         material_path=userworks.material.path
+        response = client.put_object(
+                Bucket='aidcs-1256440297',
+                Body=userImage,
+                Key=material_path,
+                StorageClass='STANDARD',
+                EnableMD5=False
+            )
+        print(response['ETag'])
+        print(response)
 
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
 
@@ -1126,7 +1177,9 @@ class WXDownloadView(View):
         post_data = json.loads(post_data)
         download_id = post_data.get('download_id').strip()
         work = Works.objects.get(id=int(download_id))
-        download_num=work.download_nums+1
+        work.download_nums+=1
+        download_num=work.download_nums
+        work.save()
         data = {"status": "success", "msg":"下载","download_num": download_num}
         return HttpResponse(json.dumps(data), content_type="application/json")
 
@@ -1151,6 +1204,15 @@ class WXGenerateLineArtView(CommonResponseMixin, View):
         userworks.material = userImage
         userworks.save()
         material_path=userworks.material.path
+        response = client.put_object(
+                Bucket='aidcs-1256440297',
+                Body=userImage,
+                Key=material_path,
+                StorageClass='STANDARD',
+                EnableMD5=False
+            )
+        print(response['ETag'])
+        print(response)
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag
@@ -1191,6 +1253,15 @@ class WXGenerateFigureView(CommonResponseMixin, View):
         userworks.material = userImage
         userworks.save()
         material_path=userworks.material.path
+        response = client.put_object(
+                Bucket='aidcs-1256440297',
+                Body=userImage,
+                Key=material_path,
+                StorageClass='STANDARD',
+                EnableMD5=False
+            )
+        print(response['ETag'])
+        print(response)
         userGenerateGray = ContentFile(open(BASE_DIR+"/image.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag
@@ -1230,6 +1301,15 @@ class WXGenerateChineseView(CommonResponseMixin, View):
         userworks.material = userImage
         userworks.save()
         material_path = userworks.material.path
+        response = client.put_object(
+                Bucket='aidcs-1256440297',
+                Body=userImage,
+                Key=material_path,
+                StorageClass='STANDARD',
+                EnableMD5=False
+            )
+        print(response['ETag'])
+        print(response)
         userGenerateGray = ContentFile(open(BASE_DIR + "/image.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag
@@ -1271,6 +1351,15 @@ class WXGenerateLineView(CommonResponseMixin, View):
         userworks.material = userImage
         userworks.save()
         material_path = userworks.material.path
+        response = client.put_object(
+                Bucket='aidcs-1256440297',
+                Body=userImage,
+                Key=material_path,
+                StorageClass='STANDARD',
+                EnableMD5=False
+            )
+        print(response['ETag'])
+        print(response)
         userGenerateGray = ContentFile(open(BASE_DIR + "/image.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag
@@ -1311,6 +1400,15 @@ class WXGenerateStyleView(CommonResponseMixin, View):
         userworks.material = userImage
         userworks.save()
         material_path = userworks.material.path
+        response = client.put_object(
+                Bucket='aidcs-1256440297',
+                Body=userImage,
+                Key=material_path,
+                StorageClass='STANDARD',
+                EnableMD5=False
+            )
+        print(response['ETag'])
+        print(response)
         userGenerateGray = ContentFile(open(BASE_DIR + "/image.jpg", "rb").read())
         # 保存生成的作品
         work.tag = tag

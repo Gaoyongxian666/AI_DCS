@@ -576,7 +576,7 @@ class WXMyFavWorksView(View,CommonResponseMixin):
         work_list_=[]
         have_next=False
         for work in works:
-            work_list_.append((work.id,str(work.image)))
+            work_list_.append({"id":work.id,"image_url": str(work.image)})
         if works.has_next():
             have_next = True
         response = {"work_list":work_list_, "have_next":have_next, "code": ReturnCode.SUCCESS}
@@ -594,7 +594,7 @@ class WXMyLoveWorksView(CommonResponseMixin, View):
         work_list = []
         fav_works = UserLove.objects.filter(user=user, love_type=1).order_by("-add_time")
         for fav_work in fav_works:
-            work_id = fav_work.fav_id
+            work_id = fav_work.love_id
             try:
                 work = Works.objects.get(id=work_id)
                 work_list.append(work)
@@ -612,7 +612,7 @@ class WXMyLoveWorksView(CommonResponseMixin, View):
         work_list_ = []
         have_next = False
         for work in works:
-            work_list_.append((work.id, str(work.image)))
+            work_list_.append({"id":work.id,"image_url": str(work.image)})
         if works.has_next():
             have_next = True
         response = {"work_list": work_list_, "have_next": have_next, "code": ReturnCode.SUCCESS}
