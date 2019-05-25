@@ -1024,8 +1024,10 @@ class WXWorksDetailView(View,CommonResponseMixin):
 # 收藏
 class WXAddFavView(View,CommonResponseMixin):
     def post(self, request):
-        fav_id = request.POST.get('fav_id', 0)
-        fav_type = request.POST.get('fav_type', 0)
+        post_data = request.body.decode('utf-8')
+        post_data = json.loads(post_data)
+        fav_id = post_data.get('fav_id').strip()
+        fav_type = post_data.get('fav_type').strip()
         if not already_authorized(request):
             response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
             return JsonResponse(response, safe=False)
@@ -1066,8 +1068,10 @@ class WXAddFavView(View,CommonResponseMixin):
 # 点赞
 class WXAddLoveView(View,CommonResponseMixin):
     def post(self, request):
-        love_id = request.POST.get('love_id', 0)
-        love_type = request.POST.get('love_type', 0)
+        post_data = request.body.decode('utf-8')
+        post_data = json.loads(post_data)
+        love_id = post_data.get('love_id').strip()
+        love_type = post_data.get('love_type').strip()
         if not already_authorized(request):
             response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
             return JsonResponse(response, safe=False)
@@ -1118,7 +1122,9 @@ class WXDownloadView(View):
         response['Content-Disposition'] = 'attachment; filename=' + filename.encode('utf-8').decode('ISO-8859-1')
         return response
     def post(self, request):
-        download_id = request.POST.get('download_id', 0)
+        post_data = request.body.decode('utf-8')
+        post_data = json.loads(post_data)
+        download_id = post_data.get('download_id').strip()
         work = Works.objects.get(id=int(download_id))
         download_num=work.download_nums+1
         data = {"status": "success", "msg":"下载","download_num": download_num}
