@@ -1196,15 +1196,12 @@ class WXGenerateLineArtView(CommonResponseMixin, View):
         post_data = json.loads(post_data)
         name = post_data.get('name').strip()
         desc = post_data.get('desc').strip()
-        style = post_data.get('style').strip()
         # name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
+        if name == '':
+            name = "未命名作品"
         # desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
-        if style=='':
-            style="0"
+        if desc == '':
+            desc = "这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
         tag="线稿上色"
         userworks.user = user
@@ -1410,18 +1407,15 @@ class WXGenerateStyleView(CommonResponseMixin, View):
         post_data = json.loads(post_data)
         name = post_data.get('name').strip()
         desc = post_data.get('desc').strip()
+        style = post_data.get('style').strip()
         # name = request.POST.get('name', "未命名作品")
         if name == '':
             name = "未命名作品"
         # desc = request.POST.get('desc', "这篇作品还没有作品描述")
         if desc == '':
             desc = "这篇作品还没有作品描述"
-        name = request.POST.get('name', "未命名作品")
-        if name == '':
-            name = "未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc == '':
-            desc = "这篇作品还没有作品描述"
+        if style == '':
+            style = "0"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
         style = request.POST.get('style', "0")
 
