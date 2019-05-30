@@ -1192,12 +1192,19 @@ class WXGenerateLineArtView(CommonResponseMixin, View):
         user = UserProfile.objects.get(open_id=open_id)
         work = Works()
         userworks = UserWorks()
-        name = request.POST.get('name', "未命名作品")
+        post_data = request.body.decode('utf-8')
+        post_data = json.loads(post_data)
+        name = post_data.get('name').strip()
+        desc = post_data.get('desc').strip()
+        style = post_data.get('style').strip()
+        # name = request.POST.get('name', "未命名作品")
         if name== '':
             name="未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        # desc = request.POST.get('desc', "这篇作品还没有作品描述")
         if desc=='':
             desc="这篇作品还没有作品描述"
+        if style=='':
+            style="0"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
         tag="线稿上色"
         userworks.user = user
@@ -1234,6 +1241,7 @@ class WXGenerateLineArtView(CommonResponseMixin, View):
 
 class WXGenerateFigureView(CommonResponseMixin, View):
     def post(self, request):
+
         if not already_authorized(request):
             response = self.wrap_json_response(code=ReturnCode.UNAUTHORIZED)
             return JsonResponse(response, safe=False)
@@ -1241,12 +1249,16 @@ class WXGenerateFigureView(CommonResponseMixin, View):
         user = UserProfile.objects.get(open_id=open_id)
         work = Works()
         userworks = UserWorks()
-        name = request.POST.get('name', "未命名作品")
-        if name== '':
-            name="未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
-        if desc=='':
-            desc="这篇作品还没有作品描述"
+        post_data = request.body.decode('utf-8')
+        post_data = json.loads(post_data)
+        name = post_data.get('name').strip()
+        desc = post_data.get('desc').strip()
+        # name = request.POST.get('name', "未命名作品")
+        if name == '':
+            name = "未命名作品"
+        # desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        if desc == '':
+            desc = "这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
         tag="生成动漫"
         userworks.user = user
@@ -1289,10 +1301,14 @@ class WXGenerateChineseView(CommonResponseMixin, View):
         user = UserProfile.objects.get(open_id=open_id)
         work = Works()
         userworks = UserWorks()
-        name = request.POST.get('name', "未命名作品")
+        post_data = request.body.decode('utf-8')
+        post_data = json.loads(post_data)
+        name = post_data.get('name').strip()
+        desc = post_data.get('desc').strip()
+        # name = request.POST.get('name', "未命名作品")
         if name == '':
             name = "未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        # desc = request.POST.get('desc', "这篇作品还没有作品描述")
         if desc == '':
             desc = "这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
@@ -1339,10 +1355,14 @@ class WXGenerateLineView(CommonResponseMixin, View):
         user = UserProfile.objects.get(open_id=open_id)
         work = Works()
         userworks = UserWorks()
-        name = request.POST.get('name', "未命名作品")
+        post_data = request.body.decode('utf-8')
+        post_data = json.loads(post_data)
+        name = post_data.get('name').strip()
+        desc = post_data.get('desc').strip()
+        # name = request.POST.get('name', "未命名作品")
         if name == '':
             name = "未命名作品"
-        desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        # desc = request.POST.get('desc', "这篇作品还没有作品描述")
         if desc == '':
             desc = "这篇作品还没有作品描述"
         userImage = request.FILES.get("file", None)  # 获取上传的文件，如果没有文件，则默认为None
@@ -1386,6 +1406,16 @@ class WXGenerateStyleView(CommonResponseMixin, View):
         user = UserProfile.objects.get(open_id=open_id)
         work = Works()
         userworks = UserWorks()
+        post_data = request.body.decode('utf-8')
+        post_data = json.loads(post_data)
+        name = post_data.get('name').strip()
+        desc = post_data.get('desc').strip()
+        # name = request.POST.get('name', "未命名作品")
+        if name == '':
+            name = "未命名作品"
+        # desc = request.POST.get('desc', "这篇作品还没有作品描述")
+        if desc == '':
+            desc = "这篇作品还没有作品描述"
         name = request.POST.get('name', "未命名作品")
         if name == '':
             name = "未命名作品"
