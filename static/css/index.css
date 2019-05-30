@@ -2418,6 +2418,7 @@ footer .footer .new{
 	text-shadow: 0 1px 5px rgb(255,160,255),
 	0 1px 15px rgb(255,160,55);
 }
+
         .functionLayer{
             position: fixed;
             top:0;
@@ -2671,4 +2672,4 @@ h1.loadingtext span:nth-child(8) {
             font-size: 40px;
             letter-spacing: 8px;
 
-        }
+}
