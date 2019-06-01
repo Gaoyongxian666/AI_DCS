@@ -571,7 +571,7 @@ class WXMyFavWorksView(View,CommonResponseMixin):
         except PageNotAnInteger:
             page = 1
 
-        p = Paginator(work_list, 8)
+        p = Paginator(work_list, 15)
         works = p.page(page)
         work_list_=[]
         have_next=False
@@ -607,7 +607,7 @@ class WXMyLoveWorksView(CommonResponseMixin, View):
         except PageNotAnInteger:
             page = 1
 
-        p = Paginator(work_list, 8)
+        p = Paginator(work_list, 15)
         works = p.page(page)
         work_list_ = []
         have_next = False
@@ -640,7 +640,7 @@ class WXMyWorksView(CommonResponseMixin, View):
         except PageNotAnInteger:
             page = 1
 
-        p = Paginator(works_list, 8)
+        p = Paginator(works_list, 15)
         works = p.page(page)
         work_list_ = []
         have_next = False

@@ -1011,7 +1011,7 @@ class WXWorksListView(View,CommonResponseMixin):
         except PageNotAnInteger:
             page = 1
 
-        p = Paginator(all_works_, 9)
+        p = Paginator(all_works_, 15)
         works = p.page(page)
         work_list_ = []
         have_next = False
@@ -1035,7 +1035,7 @@ class WXIndex(View,CommonResponseMixin):
         except PageNotAnInteger:
             page = 1
 
-        p = Paginator(all_works_, 9)
+        p = Paginator(all_works_, 15)
         works = p.page(page)
         work_list_ = []
         have_next = False
@@ -1058,7 +1058,7 @@ class WXWorksDetailView(View,CommonResponseMixin):
         userworks = UserWorks.objects.get(works=work)
         if userworks:
             muser = userworks.user
-            username = muser.username
+            username = muser.nickname
         has_fav_work = False
         has_love_work = False
         if UserFavorite.objects.filter(user=user, fav_id=work.id, fav_type=1):
