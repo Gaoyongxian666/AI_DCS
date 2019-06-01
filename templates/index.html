@@ -207,6 +207,33 @@
                     {% endfor %}
                 </div>
     		</div>
+<!-- 风格生成区展示 -->
+    		<div class="row wow slideInUp" data-wow-duration="2s" animation-delay="0.2s">
+    			<div class="col-md-12">
+    				<span class="glyphicon glyphicon-asterisk showTit"> 风格生成</span>
+    			</div>
+    			<div class="row">
+                    <div class="col-xs-12 more">
+                        <a href="{% url 'works:works_list' %}?sort=2"  target="blank">更多>></a>
+                    </div>
+
+                    {% for work in style %}
+
+                        <div class="col-xs-6 col-md-3">
+
+                            <a href="{% url 'works:works_detail' work.id %}" class="thumbnail">
+                                <img src="{{ MEDIA_URL }}{{ work.image }}" alt="LOGO">
+                                <h6>
+                                    <span class="glyphicon glyphicon-thumbs-up"><em>{{ work.love_nums }}</em></span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><span class="glyphicon glyphicon-star"><em>{{ work.fav_nums }}</em></span></strong>
+                                </h6>
+                            </a>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+    		</div>
 
     		<!-- 水墨画生成区展示 -->
     		<div class="row wow slideInUp" data-wow-duration="2s" animation-delay="0.2s">
