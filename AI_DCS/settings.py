@@ -55,97 +55,97 @@ sys.path.insert(0,BASE_DIR_father)
 
 
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'standard': {
-#             'format': '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]'
-#                       '[%(levelname)s][%(message)s]'
-#         },
-#         'simple': {
-#             'format': '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]%(message)s'
-#         },
-#         'collect': {
-#             'format': '%(message)s'
-#         }
-#     },
-#     'filters': {
-#         'require_debug_true': {
-#             '()': 'django.utils.log.RequireDebugTrue',
-#         },
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'filters': ['require_debug_true'],
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'simple'
-#         },
-#         'default': {
-#             'level': 'INFO',
-#             'class': 'logging.handlers.RotatingFileHandler',
-#             'filename': os.path.join(BASE_LOG_DIR, "aidcs_info.log"),
-#             'maxBytes': 1024 * 1024 * 50,
-#             'backupCount': 3,
-#             'formatter': 'standard',
-#             'encoding': 'utf-8',
-#         },
-#         'error': {
-#             'level': 'ERROR',
-#             'class': 'logging.handlers.RotatingFileHandler',
-#             'filename': os.path.join(BASE_LOG_DIR, "aidcs_err.log"),
-#             'maxBytes': 1024 * 1024 * 50,
-#             'backupCount': 5,
-#             'formatter': 'standard',
-#             'encoding': 'utf-8',
-#         },
-#         'collect': {
-#             'level': 'INFO',
-#             'class': 'logging.handlers.RotatingFileHandler',
-#             'filename': os.path.join(BASE_LOG_DIR, "aidcs_collect.log"),
-#             'maxBytes': 1024 * 1024 * 50,
-#             'backupCount': 5,
-#             'formatter': 'collect',
-#             'encoding': "utf-8"
-#         },
-#         'file_handler': {
-#             'level': 'DEBUG',
-#             'class': 'logging.handlers.TimedRotatingFileHandler',
-#             'filename':os.path.join(BASE_LOG_DIR, "aidcs_all.log"),
-#             'formatter':'standard'
-#          },
-#         'mail_admins': {
-#              'level': 'ERROR',
-#              'class': 'django.utils.log.AdminEmailHandler',
-#               'formatter':'standard'
-#          },
-#
-#     },
-#     'loggers': {
-#         '': {
-#             'handlers': ['default','file_handler', 'console', 'error'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#         'collect': {
-#             'handlers': ['console', 'collect'],
-#             'level': 'INFO',
-#         },
-#         'django': {
-#              'handlers': ['console','file_handler'],
-#              'level':'DEBUG',
-#              'propagate': True,
-#          },
-#          'django.request': {
-#              'handlers': ['mail_admins'],
-#              'level': 'ERROR',
-#              'propagate': False,
-#          },
-#
-#
-#     },
-# }
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]'
+                      '[%(levelname)s][%(message)s]'
+        },
+        'simple': {
+            'format': '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]%(message)s'
+        },
+        'collect': {
+            'format': '%(message)s'
+        }
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'default': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_LOG_DIR, "aidcs_info.log"),
+            'maxBytes': 1024 * 1024 * 50,
+            'backupCount': 3,
+            'formatter': 'standard',
+            'encoding': 'utf-8',
+        },
+        'error': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_LOG_DIR, "aidcs_err.log"),
+            'maxBytes': 1024 * 1024 * 50,
+            'backupCount': 5,
+            'formatter': 'standard',
+            'encoding': 'utf-8',
+        },
+        'collect': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_LOG_DIR, "aidcs_collect.log"),
+            'maxBytes': 1024 * 1024 * 50,
+            'backupCount': 5,
+            'formatter': 'collect',
+            'encoding': "utf-8"
+        },
+        'file_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename':os.path.join(BASE_LOG_DIR, "aidcs_all.log"),
+            'formatter':'standard'
+         },
+        'mail_admins': {
+             'level': 'ERROR',
+             'class': 'django.utils.log.AdminEmailHandler',
+              'formatter':'standard'
+         },
+
+    },
+    'loggers': {
+        '': {
+            'handlers': ['default','file_handler', 'console', 'error'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'collect': {
+            'handlers': ['console', 'collect'],
+            'level': 'INFO',
+        },
+        'django': {
+             'handlers': ['console','file_handler'],
+             'level':'DEBUG',
+             'propagate': True,
+         },
+         'django.request': {
+             'handlers': ['mail_admins'],
+             'level': 'ERROR',
+             'propagate': False,
+         },
+
+
+    },
+}
 
 
 
